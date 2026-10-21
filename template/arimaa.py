@@ -56,6 +56,8 @@ def hay_casilla_vacia(t : Tablero, pos : Posicion) -> bool:
 def hay_pieza_de_color(t : Tablero, pos : Posicion, col : Color) -> bool:
     raise Exception("No implementado")
 
+#### Ejercicio 3
+
 def hay_casilla_vacia_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
     raise Exception("No implementado")
 
