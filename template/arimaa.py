@@ -67,8 +67,31 @@ def hay_pieza_congelada(t : Tablero, pos : Posicion) -> bool:
 
 #### Ejercicio 4
 
-def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool:
-    raise Exception("No implementado")
+def direccion_de_movimineto_habilitada(t : Tablero , pos : Posicion , d : Direccion): #FALTA
+    if hay_pieza_de_color(t,pos,d) and 
+
+def puede_mover_a_secas(t:Tablero, pos:Posicion, d:Direccion)-> bool:
+    return hay_casilla_vacia_hacia(t,pos,d)
+
+def puede_arrastrar(t:Tablero, pos:Posicion, d:Direccion, darrastre:Direccion):
+    return (hay_casilla_vacia_hacia(t,pos,d) and hay_pieza_enemiga_mas_debil_hacia(t,pos,opuesta(darrastre)))
+
+def puede_empujar(t:Tablero, pos:Posicion, d:Direccion, dempuje:Direccion): #FALTA
+    raise Exception ("asdfasfas")
+
+def puede_realizar_accion(t:Tablero, m:Movimiento)-> bool:
+    res = False
+    if m.accion == MOVER_A_SECAS and puede_mover_a_secas(t,m.origen,m.pasos[0]):
+        res = True
+    elif m.accion == ARRASTRAR and puede_arrastrar(t,m.origen,m.pasos[0],m.pasos[1]):
+        res = True
+    elif m.accion == EMPUJAR and puede_empujar(t,m.origen,m.pasos[0],m.pasos[1]):
+        res = True
+    return res
+
+
+def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool: #FALTA
+    
 
 #### Ejercicio 5
 
