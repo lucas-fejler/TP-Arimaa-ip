@@ -47,10 +47,8 @@ def posicion_vecina_hacia(pos : Posicion, d : Direccion) -> Posicion:
         pos = Posicion(pos.fila,pos.columna-1)
     return pos
 
-
 def casilla_en_posicion(t : Tablero, p : Posicion) -> Casilla:
     return t[p.fila][p.columna]
-
 
 def hay_casilla_vacia(t : Tablero, pos : Posicion) -> bool:
     raise Exception("No implementado")
