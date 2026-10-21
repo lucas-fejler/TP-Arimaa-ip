@@ -210,6 +210,7 @@ def leer_tablero(lineas : list[str]) -> Tablero:
         tablero.append(fila)
     return tablero[::-1]
 
+
 def mostrar_casilla(casilla : Casilla) -> str:
     if casilla == VACIA:
         return "-"
