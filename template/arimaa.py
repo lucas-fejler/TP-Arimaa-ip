@@ -23,13 +23,24 @@ def pasar_turno(j : Juego) -> Juego: # pragma: no cover
 #### Ejercicio 1
 
 def tablero_bien_formado(t : Tablero) -> bool:
-    raise Exception("No implementado")
+    res=True
+    for i in t:
+        if len(i)!=8:
+            res=False
+    return len(t)==8 and res
+
 
 def posicion_en_tablero(pos : Posicion) -> bool:
-    raise Exception("No implementado")
+    fila=pos[0]
+    columna=pos[1]
+    return (fila<=8 and fila>=0) and (columna<=8 and columna>=0)
 
 def movimiento_bien_formado(m : Movimiento) -> bool:
-    raise Exception("No implementado")
+    if m[0]==MOVER_A_SECAS:
+        res= (len(m[2])==1)
+    if m[0]==ARRASTRAR or m[0]==EMPUJAR:
+        res= (len(m[2])==2)
+    return (posicion_en_tablero(m[1]) and res)
 
 def juego_bien_formado(j : Juego) -> bool:
     raise Exception("No implementado")
