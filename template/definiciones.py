@@ -84,7 +84,7 @@ class Pieza(NamedTuple):
     figura : Figura
     color : Color
 
-VACIA :Final= CasillaVacia.VACIA
+VACIA : Final= CasillaVacia.VACIA
 
 Casilla = CasillaVacia | Pieza
 
