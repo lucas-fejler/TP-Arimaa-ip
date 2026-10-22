@@ -79,19 +79,19 @@ def direccion_de_movimiento_habilitada(t : Tablero , pos : Posicion , d : Direcc
         d (Direccion): Dirección en la que se verifica si el movimiento está habilitado.
         
     Returns:
-        True si la pieza puede moverse en la dirección *d* y False si no. 
+        True si en *pos* hay una pieza que puede moverse en la dirección *d* y False si no. 
         
     """
     
     res:bool = False
-    casilla = casilla_en_posicion(t,pos)
+    casilla: Casilla = casilla_en_posicion(t,pos)
     
     if casilla != VACIA:    
         if casilla.figura == CONEJO:
-            if casilla.color == DORADO and d != SUR:
-                res = True
-            elif casilla.color == PLATEADO and d != NORTE:
-                res = True        
+            if casilla.color == DORADO:
+                res =  d != SUR
+            else:
+                res =  d != NORTE
         else:
             res = True
                        
@@ -99,32 +99,40 @@ def direccion_de_movimiento_habilitada(t : Tablero , pos : Posicion , d : Direcc
             
 
 def puede_mover_a_secas(t:Tablero, pos:Posicion, d:Direccion)-> bool:
+    """
+    Chequea si la pieza en *pos* puede moverse a secas en la dirección *d*.
+        
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+        
+    Args: 
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición actual de la pieza.
+        d (Direccion): Dirección en la que se verifica si la acción está habilitada.
+            
+    Returns:
+        True si la pieza puede moverse a secas en la dirección *d* y False si no. 
+            
+    """
     return hay_casilla_vacia_hacia(t,pos,d)
 
 def puede_arrastrar(t:Tablero, pos:Posicion, d:Direccion, direc_arrastre:Direccion)-> bool:
     return (hay_casilla_vacia_hacia(t,pos,d) and hay_pieza_enemiga_mas_debil_hacia(t,pos,opuesta(direc_arrastre)))
 
 def puede_empujar(t:Tablero, pos:Posicion, d:Direccion, direc_empuje:Direccion)-> bool:
-    res:bool = False
+    pos_vecina:Posicion = posicion_vecina_hacia(pos,d)
     
-    if hay_pieza_enemiga_mas_debil_hacia(t,pos,d):
-        pos_enemiga = posicion_vecina_hacia(pos,d)
-        if hay_casilla_vacia_hacia(t,pos_enemiga,direc_empuje):
-            res = True
-    
-    return res
-        
-        
+    return (hay_pieza_enemiga_mas_debil_hacia(t, pos, d) 
+            and hay_casilla_vacia_hacia(t, pos_vecina, direc_empuje))        
 
 def puede_realizar_accion(t:Tablero, m:Movimiento)-> bool:
     res:bool = False
     
-    if m.accion == MOVER_A_SECAS and puede_mover_a_secas(t,m.origen,m.pasos[0]):
-        res = True
-    elif m.accion == ARRASTRAR and puede_arrastrar(t,m.origen,m.pasos[0],m.pasos[1]):
-        res = True
-    elif m.accion == EMPUJAR and puede_empujar(t,m.origen,m.pasos[0],m.pasos[1]):
-        res = True
+    if m.accion == MOVER_A_SECAS:
+        res = puede_mover_a_secas(t,m.origen,m.pasos[0])
+    elif m.accion == ARRASTRAR:
+        res =  puede_arrastrar(t,m.origen,m.pasos[0],m.pasos[1])
+    else: 
+        res = puede_empujar(t,m.origen,m.pasos[0],m.pasos[1])
         
     return res    
     
