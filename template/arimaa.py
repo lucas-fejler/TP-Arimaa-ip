@@ -52,7 +52,7 @@ def posicion_vecina_hacia(pos : Posicion, d : Direccion) -> Posicion:
     raise Exception("No implementado")
 
 def casilla_en_posicion(t : Tablero, p : Posicion) -> Casilla:
-    return t[p.fila][p.columna]
+    raise Exception("No implementado")
 
 def hay_casilla_vacia(t : Tablero, pos : Posicion) -> bool:
     raise Exception("No implementado")
