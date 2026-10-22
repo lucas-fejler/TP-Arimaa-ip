@@ -67,30 +67,74 @@ def hay_pieza_congelada(t : Tablero, pos : Posicion) -> bool:
 
 #### Ejercicio 4
 
-def direccion_de_movimineto_habilitada(t : Tablero , pos : Posicion , d : Direccion): #FALTA
-    if hay_pieza_de_color(t,pos,d) and 
+def direccion_de_movimiento_habilitada(t : Tablero , pos : Posicion , d : Direccion)-> bool:
+    """
+    Chequea si la pieza en *pos* puede moverse en la dirección *d*.
+    
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+    
+    Args: 
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición actual de la pieza.
+        d (Direccion): Dirección en la que se verifica si el movimiento está habilitado.
+        
+    Returns:
+        True si la pieza puede moverse en la dirección *d* y False si no. 
+        
+    """
+    
+    res:bool = False
+    casilla = casilla_en_posicion(t,pos)
+    
+    if casilla != VACIA:    
+        if casilla.figura == CONEJO:
+            if casilla.color == DORADO and d != SUR:
+                res = True
+            elif casilla.color == PLATEADO and d != NORTE:
+                res = True        
+        else:
+            res = True
+                       
+    return res
+            
 
 def puede_mover_a_secas(t:Tablero, pos:Posicion, d:Direccion)-> bool:
     return hay_casilla_vacia_hacia(t,pos,d)
 
-def puede_arrastrar(t:Tablero, pos:Posicion, d:Direccion, darrastre:Direccion):
-    return (hay_casilla_vacia_hacia(t,pos,d) and hay_pieza_enemiga_mas_debil_hacia(t,pos,opuesta(darrastre)))
+def puede_arrastrar(t:Tablero, pos:Posicion, d:Direccion, direc_arrastre:Direccion)-> bool:
+    return (hay_casilla_vacia_hacia(t,pos,d) and hay_pieza_enemiga_mas_debil_hacia(t,pos,opuesta(direc_arrastre)))
 
-def puede_empujar(t:Tablero, pos:Posicion, d:Direccion, dempuje:Direccion): #FALTA
-    raise Exception ("asdfasfas")
+def puede_empujar(t:Tablero, pos:Posicion, d:Direccion, direc_empuje:Direccion)-> bool:
+    res:bool = False
+    
+    if hay_pieza_enemiga_mas_debil_hacia(t,pos,d):
+        pos_enemiga = posicion_vecina_hacia(pos,d)
+        if hay_casilla_vacia_hacia(t,pos_enemiga,direc_empuje):
+            res = True
+    
+    return res
+        
+        
 
 def puede_realizar_accion(t:Tablero, m:Movimiento)-> bool:
-    res = False
+    res:bool = False
+    
     if m.accion == MOVER_A_SECAS and puede_mover_a_secas(t,m.origen,m.pasos[0]):
         res = True
     elif m.accion == ARRASTRAR and puede_arrastrar(t,m.origen,m.pasos[0],m.pasos[1]):
         res = True
     elif m.accion == EMPUJAR and puede_empujar(t,m.origen,m.pasos[0],m.pasos[1]):
         res = True
-    return res
-
-
-def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool: #FALTA
+        
+    return res    
+    
+def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool:
+    return (hay_pieza_de_color(j.tablero,m.origen,j.turno) 
+            and not hay_pieza_congelada(j.tablero,m.origen)
+            and direccion_de_movimiento_habilitada(j.tablero,m.origen,m.pasos[0])
+            and (j.pasos_consumidos + len(m.pasos)) <= MAX_PASOS 
+            and puede_realizar_accion(j.tablero,m))
+    
     
 
 #### Ejercicio 5
