@@ -193,6 +193,214 @@ class test_puede_realizar_movimiento(unittest.TestCase):
         j = Juego(t, PLATEADO, 0)
         m = Movimiento(MOVER_A_SECAS, Posicion(0, 1), [NORTE])
         self.assertTrue(puede_realizar_movimiento(j, m))
+        
+    def test_arrastrar_ok(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+              #01234567
+            ])
+        j = Juego(t, PLATEADO, 0)
+        m = Movimiento(ARRASTRAR, Posicion(0, 1), [NORTE,OESTE])
+        self.assertTrue(puede_realizar_movimiento(j, m))
+            
+    def test_empujar_ok(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+              #01234567
+            ])
+        j = Juego(t, PLATEADO, 0)
+        m = Movimiento(EMPUJAR, Posicion(0, 1), [ESTE,ESTE])
+        self.assertTrue(puede_realizar_movimiento(j, m))
+                
+    def test_direccion_permitida_conejo_dorado(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+              #01234567
+            ])
+        j = Juego(t, DORADO, 0)
+        m = Movimiento(MOVER_A_SECAS, Posicion(5, 1), [NORTE])
+        self.assertTrue(puede_realizar_movimiento(j, m))      
+    
+    def test_direccion_permitida_conejo_plateado(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+               #01234567
+            ])
+        j = Juego(t,PLATEADO, 0)
+        m = Movimiento(MOVER_A_SECAS, Posicion(5, 6), [SUR])
+        self.assertTrue(puede_realizar_movimiento(j, m))  
+
+    def test_direccion_NO_permitida_conejo_dorado(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+              #01234567
+            ])
+        j = Juego(t, DORADO, 0)
+        m = Movimiento(MOVER_A_SECAS, Posicion(5, 1), [SUR])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_direccion_NO_permitida_conejo_plateado(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+               #01234567
+            ])
+        j = Juego(t,PLATEADO, 0)
+        m = Movimiento(MOVER_A_SECAS, Posicion(5, 6), [NORTE])
+        self.assertFalse(puede_realizar_movimiento(j, m)) 
+        
+    def test_casilla_vacia(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+               #01234567
+            ])
+        j = Juego(t,PLATEADO, 0)
+        m = Movimiento(MOVER_A_SECAS, Posicion(6,0), [NORTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_pieza_congelada(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+               #01234567
+            ])
+        j = Juego(t,PLATEADO, 0)
+        m = Movimiento(MOVER_A_SECAS, Posicion(3,4), [NORTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_pasos_de_mas(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+               #01234567
+            ])
+        j = Juego(t,PLATEADO, 3)
+        m = Movimiento(EMPUJAR, Posicion(0,1), [ESTE,NORTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_mover_a_secas_sin_lugar(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '--------', #2
+              '-D------', #1
+              '-mD--mDR', #0
+              #01234567
+            ])
+        j = Juego(t, PLATEADO, 0)
+        m = Movimiento(MOVER_A_SECAS, Posicion(0, 1), [NORTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_no_hay_pieza_para_arrastrar(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '----D---', #1
+              '-m---mDR', #0
+              #01234567
+            ])
+        j = Juego(t, PLATEADO, 0)
+        m = Movimiento(ARRASTRAR, Posicion(0, 1), [NORTE,OESTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_no_hay_pieza_para_empujar(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '----D---', #1
+              '-m---mDR', #0
+              #01234567
+            ])
+        j = Juego(t, PLATEADO, 0)
+        m = Movimiento(EMPUJAR, Posicion(0, 1), [NORTE,OESTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+    
+    def test_empujar_sin_lugar(self):
+        t = leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '------r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--R-----', #1
+              '-mD--mDR', #0
+              #01234567
+            ])
+        j = Juego(t, PLATEADO, 0)
+        m = Movimiento(EMPUJAR, Posicion(0, 1), [ESTE,NORTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
 
 #### Ejercicio 5
 

@@ -116,15 +116,57 @@ def puede_mover_a_secas(t:Tablero, pos:Posicion, d:Direccion)-> bool:
     return hay_casilla_vacia_hacia(t,pos,d)
 
 def puede_arrastrar(t:Tablero, pos:Posicion, d:Direccion, direc_arrastre:Direccion)-> bool:
+    """
+    Chequea si la pieza en *pos* puede moverse en la dirección *d* arrastrando a una pieza enemiga en la dirección *direc_arrastre*.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos) and not hay_casilla_vacia(t, pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la pieza que realiza el arrastre.
+        d (Direccion): Dirección en la que se mueve la pieza en *pos*.
+        direc_arrastre (Direccion): Dirección en la que se mueve la pieza enemiga arrastrada.
+
+    Returns:
+        True si la pieza en *pos* puede realizar el arrastre y False en caso contrario.
+
+    """
     return (hay_casilla_vacia_hacia(t,pos,d) and hay_pieza_enemiga_mas_debil_hacia(t,pos,opuesta(direc_arrastre)))
 
 def puede_empujar(t:Tablero, pos:Posicion, d:Direccion, direc_empuje:Direccion)-> bool:
+    """
+    Chequea si la pieza en *pos* puede moverse en la dirección *d* empujando a una pieza enemiga en la dirección *direc_empuje*.
+    
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos) and not hay_casilla_vacia(t, pos)
+    
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la pieza que realiza el empuje.
+        d (Direccion): Dirección en la que se mueve la pieza en *pos*.
+        direc_empuje (Direccion): Dirección en la que se mueve la pieza enemiga empujada.
+    
+    Returns:
+        True si la pieza en *pos* puede realizar el empuje y False en caso contrario.
+    
+    """    
     pos_vecina:Posicion = posicion_vecina_hacia(pos,d)
     
-    return (hay_pieza_enemiga_mas_debil_hacia(t, pos, d) 
-            and hay_casilla_vacia_hacia(t, pos_vecina, direc_empuje))        
+    return (hay_pieza_enemiga_mas_debil_hacia(t, pos, d) and hay_casilla_vacia_hacia(t, pos_vecina, direc_empuje))        
 
 def puede_realizar_accion(t:Tablero, m:Movimiento)-> bool:
+    """
+    Chequea si la pieza en *m.origen* puede realizar la acción *m.accion*.
+        
+    PRE: tablero_bien_formado(t) and movimiento_bien_formado(m) and not hay_casilla_vacia(t, m.origen)
+        
+    Args:
+        t (Tablero): Tablero del juego.
+        m (Movimiento): Acción, posición de la pieza y pasos.
+        
+    Returns:
+        True si la pieza en *m.origen* puede realizar la acción *m.accion* y False en caso contrario.
+        
+    """
     res:bool = False
     
     if m.accion == MOVER_A_SECAS:
@@ -136,7 +178,20 @@ def puede_realizar_accion(t:Tablero, m:Movimiento)-> bool:
         
     return res    
     
-def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool:
+def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool:    
+    """
+    Chequea si se puede realizar el movimiento *m* en el juego *j*.
+            
+    PRE: juego_bien_formado(j) and movimiento_bien_formado(m)
+            
+    Args:
+        j (Juego): Tablero del juego, color del turno actual y pasos consumidos en el turno.
+        m (Movimiento): Acción, posición de la pieza y pasos.
+            
+    Returns:
+        True si se puede realizar el movimiento *m* en el juego *j* y False si no.
+            
+    """
     return (hay_pieza_de_color(j.tablero,m.origen,j.turno) 
             and not hay_pieza_congelada(j.tablero,m.origen)
             and direccion_de_movimiento_habilitada(j.tablero,m.origen,m.pasos[0])
