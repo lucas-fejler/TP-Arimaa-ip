@@ -67,7 +67,22 @@ def hay_casilla_vacia_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
     return res
 
 def hay_pieza_amiga_vecina(t : Tablero, pos : Posicion) -> bool:
-    raise Exception("No implementado")
+    encontro_pieza_amiga:bool = False
+    i:int = 0
+    direcciones:list[Direccion] = [NORTE,SUR,ESTE,OESTE]
+    while i < len(direcciones) and not encontro_pieza_amiga:
+        d:Direccion = direcciones[i]
+        encontro_pieza_amiga = aux_hay_pieza_amiga_hacia(t,pos,d)
+        i+=1
+    return encontro_pieza_amiga
+
+def aux_hay_pieza_amiga_hacia(t:Tablero, pos:Posicion, d: Direccion) -> bool:
+    res:bool = False
+    if not hay_casilla_vacia(t,pos):
+        c:Casilla = casilla_en_posicion(t,pos)
+        pos_vecina:Posicion = posicion_vecina_hacia(pos,d)
+        res= posicion_en_tablero(pos_vecina) and hay_pieza_de_color(t,pos_vecina,c.color)
+    return res
 
 def hay_pieza_enemiga_mas_debil_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
     raise Exception("No implementado")
