@@ -60,7 +60,11 @@ def hay_pieza_de_color(t : Tablero, pos : Posicion, col : Color) -> bool:
 #### Ejercicio 3
 
 def hay_casilla_vacia_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
-    raise Exception("No implementado")
+    pos_vecina:Posicion = posicion_vecina_hacia(pos,d)
+    res:bool = False
+    if posicion_en_tablero(pos_vecina):
+        res= hay_casilla_vacia(t,pos_vecina)
+    return res
 
 def hay_pieza_amiga_vecina(t : Tablero, pos : Posicion) -> bool:
     raise Exception("No implementado")
