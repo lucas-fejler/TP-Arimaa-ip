@@ -54,7 +54,8 @@ def hay_casilla_vacia(t : Tablero, pos : Posicion) -> bool:
     return t[pos.fila][pos.columna] == VACIA
 
 def hay_pieza_de_color(t : Tablero, pos : Posicion, col : Color) -> bool:
-    raise Exception("No implementado")
+    c:Casilla = casilla_en_posicion(t,pos)
+    return not hay_casilla_vacia(t,pos) and c.color == col
 
 #### Ejercicio 3
 
