@@ -122,7 +122,11 @@ def aux_hay_pieza_enemiga_hacia_direccion(t:Tablero, pos:Posicion, d: Direccion)
     return posicion_en_tablero(pos_hacia) and hay_pieza_de_color(t,pos_hacia,oponente(c.color))
 
 def hay_pieza_congelada(t : Tablero, pos : Posicion) -> bool:
-    raise Exception("No implementado")
+    res: bool = False
+    c:Casilla = casilla_en_posicion(t,pos)
+    if not hay_casilla_vacia(t,pos):
+        res  = hay_pieza_enemiga_mas_fuerte_vecina(t,pos) and not hay_pieza_amiga_vecina(t,pos)
+    return res
 
 #### Ejercicio 4
 
