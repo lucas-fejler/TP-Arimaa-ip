@@ -150,7 +150,7 @@ def direccion_de_movimiento_habilitada(t : Tablero , pos : Posicion , d : Direcc
     res:bool = False
     casilla: Casilla = casilla_en_posicion(t,pos)
     
-    if casilla != VACIA:    
+    if not hay_casilla_vacia(t,pos):    
         if casilla.figura == CONEJO:
             if casilla.color == DORADO:
                 res =  d != SUR
