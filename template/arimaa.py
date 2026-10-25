@@ -85,7 +85,17 @@ def aux_hay_pieza_amiga_hacia(t:Tablero, pos:Posicion, d: Direccion) -> bool:
     return res
 
 def hay_pieza_enemiga_mas_debil_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
-    raise Exception("No implementado")
+    res: bool = False
+    pos_hacia:Posicion = posicion_vecina_hacia(pos,d)
+    if posicion_en_tablero(pos_hacia) and not hay_casilla_vacia(t,pos_hacia):
+        c_vecina : Casilla = casilla_en_posicion(t,pos_hacia)
+        f_vecina : Figura = c_vecina.figura
+        col_vecino : Color = c_vecina.color
+        c:Casilla = casilla_en_posicion(t,pos)
+        f:Figura = c.figura
+        col:Color = c.color
+        res = col_vecino == oponente(col) and fuerza(f) > fuerza(f_vecina)
+    return res
 
 def hay_pieza_enemiga_mas_fuerte_vecina(t : Tablero, pos : Posicion) -> bool:
     raise Exception("No implementado")
