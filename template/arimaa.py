@@ -85,8 +85,8 @@ def movimiento_bien_formado(m : Movimiento) -> bool:
 
 def juego_bien_formado(j : Juego) -> bool:
     """
-    Indica si el juego *j* está bien formado, es decir que el tablero 
-    j.tablero este bien formado y los pasos j.pasos_consumidos esten entre 0 y 4
+    Indica si el juego *j* está bien formado, es decir que su tablero este bien formado
+    y los pasos pasos consumidos de juego estén entre 0 y 3.
 
     PRE: True
 
@@ -95,7 +95,8 @@ def juego_bien_formado(j : Juego) -> bool:
 
     Returns:
         True si el juego está bien formado y False si no.
-    """    
+    """
+
     return (tablero_bien_formado(j.tablero) and (j.pasos_consumidos<MAX_PASOS and j.pasos_consumidos>=0))
 
 #### Ejercicio 2
@@ -147,9 +148,37 @@ def realizar_movimiento(j : Juego, m : Movimiento) -> Juego:
 #### Ejercicio 7
 
 def es_inicio_de_turno(j: Juego, col: Color)-> bool:
+    """
+    Indica si el juego *j* está al inicio del turno del color *col*, 
+    es decir si le toca jugar a *col* y los pasos consumidos son 0.
+
+    PRE: True
+
+    Args:
+        j (Juego): El juego que queremos mirar.
+        col (Color): El color por el que se pregunta.
+
+    Returns:
+        True si j.turno es *col* y j.pasos_consumidos es 0, False si no.
+    """
+
     return (j.turno==col and j.pasos_consumidos==0)
 
 def hay_conejo_en_tablero(j: Juego, col: Color)-> bool:
+    """
+    Indica si en el juego *j* hay un conejo en el tablero de color *col*. 
+
+    PRE: juego_bien_formado(j)
+
+    Args:
+        j (Juego): El juego que queremos mirar.
+        col (Color): El color de conejo por el que se pregunta.
+
+    Returns:
+        True si en alguna casilla del tablero hay un conejo de color *col* y 
+        False si no.
+    """
+
     hay_conejo: bool= False
     for fila in range(ALTO):
         for columna in range(ANCHO):
@@ -158,6 +187,22 @@ def hay_conejo_en_tablero(j: Juego, col: Color)-> bool:
     return hay_conejo
 
 def hay_conejo_en_fila_inicial_oponente(j: Juego, col: Color)-> bool:
+    """
+    Indica si en el tablero del juego *j* hay un conejo de color *col*
+    en la fila inicial del oponente (la fila 7 si *col* es DORADO y la fila 0 si
+    *col* es PLATEADO)
+
+    PRE: juego_bien_formado(j)    
+
+    Args:
+        j (Juego): El juego que queremos mirar.
+        col (Color): El color del jugador cuyo conejo se busca.
+
+    Returns:
+        True si existe una casilla de esa fila con un conejo de color *col*,
+        y False si no.
+    """
+
     hay:bool=False
     if col==PLATEADO:
         fila_inicial_oponente:int=0
@@ -169,18 +214,89 @@ def hay_conejo_en_fila_inicial_oponente(j: Juego, col: Color)-> bool:
     return hay
     
 def condicion_de_ganador(j: Juego, col:Color)-> bool:
+    """
+    Indica si en el juego *j* el jugador de color *col* cumple la condición de ganador,
+    es decir, si tiene un conejo en la fila inicial del oponente o si el oponente no 
+    tiene conejos en el tablero.
+
+    PRE: juego_bien_formado(j)
+
+    Args:
+        j (Juego): El juego que queremos mirar.
+        col (Color): El color de jugador por el que se pregunta.
+
+    Returns:
+        True si *col* tiene un conejo en la fila inicial del oponente o si el oponente 
+        no tiene conejos en el tablero y False si no.
+    """
+    
     return (hay_conejo_en_fila_inicial_oponente(j,col) or not hay_conejo_en_tablero(j,oponente(col)))
 
 def condicion_de_ganador_exclusivo(j: Juego, col: Color)-> bool:
+    """
+    Indica si en el juego *j* el jugador de color *col* cumple la condición de ganador
+    exclusivo, es decir que cumple la condición de ganador y su oponente no.
+
+    PRE: juego_bien_formado(j)
+
+    Args:
+        j (Juego): El juego que queremos mirar.
+        col (Color): El color de jugador por el que se pregunta.
+
+    Returns:
+        True si *col* cumple la condición de ganador y su oponente no, False si no.
+    """
+
     return (condicion_de_ganador(j,col) and not condicion_de_ganador(j,oponente(col)))
 
 def es_jugador_ganador(j: Juego, col: Color)-> bool:
+    """
+    Indica si en el juego *j* el jugador de color *col* es ganador, es decir 
+    si reúne las condiciones de ganador al inicio del turno del oponente, o si
+    las reúne en forma exclusiva al inicio de su  turno.
+
+    PRE: juego_bien_formado(j)
+
+    Args:
+        j (Juego): El juego que queremos mirar.
+        col (Color): El color de jugador por el que se pregunta.
+
+    Returns:
+        True si *col* es el ganador del juego y False si no.
+    """
+
     return (es_inicio_de_turno(j, oponente(col)) and condicion_de_ganador(j,col)) or (es_inicio_de_turno(j,col) and condicion_de_ganador_exclusivo(j,col))
 
 def hay_ganador_determinado(j : Juego) -> bool:
+    """
+    Indica si en el juego *j* hay un ganador determinado, es decir si alguno de los dos
+    colores es jugador ganador.
+
+    PRE: juego_bien_formado(j)
+
+    Args:
+        j (Juego): El juego que queremos mirar.
+
+    Returns:
+        True si alguno de los jugadores (DORADO o PLATEADO) es ganador y False si no.
+    """
+
     return (es_jugador_ganador(j, DORADO) or es_jugador_ganador(j, PLATEADO))
 
 def ganador_del_juego(j : Juego) -> Color:
+    """
+    Devuelve el color del ganador del juego *j*
+    
+    PRE: juego_bien_formado(j) y hay_ganador_determinado(j)
+
+
+    Args:
+        j (Juego): El juego que queremos mirar.
+
+    Returns:
+        DORADO si el jugador dorado es el ganador, o PLATEADO si lo es el plateado.
+    """
+
     ganador: Color=PLATEADO
     if es_jugador_ganador(j, DORADO):
         ganador=DORADO
