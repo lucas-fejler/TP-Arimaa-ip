@@ -37,6 +37,19 @@ def juego_bien_formado(j : Juego) -> bool:
 #### Ejercicio 2
 
 def posicion_vecina_hacia(pos : Posicion, d : Direccion) -> Posicion:
+    """
+    Devuelve la posición vecina a *pos* en la dirección *d*.
+
+    PRE: True
+
+    Args:
+        pos (Posicion): Posición de partida.
+        d (Direccion): Dirección en la que se busca la posición vecina.
+
+    Returns:
+        La posición vecina a *pos* en la dirección *d* (puede quedar fuera del tablero).
+
+    """
     if d == NORTE:
         pos = Posicion(pos.fila+1,pos.columna)
     elif d == SUR:
@@ -48,18 +61,72 @@ def posicion_vecina_hacia(pos : Posicion, d : Direccion) -> Posicion:
     return pos
 
 def casilla_en_posicion(t : Tablero, p : Posicion) -> Casilla:
+    """
+    Devuelve la casilla de *t* que está en la posición *p*.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(p)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        p (Posicion): Posición de la casilla.
+
+    Returns:
+        La casilla en la posición *p*: VACIA o la pieza que la ocupa.
+
+    """
     return t[p.fila][p.columna]
 
 def hay_casilla_vacia(t : Tablero, pos : Posicion) -> bool:
+    """
+    Chequea si la casilla en *pos* está vacía.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la casilla.
+
+    Returns:
+        True si la casilla en *pos* está vacía y False si no.
+
+    """
     return t[pos.fila][pos.columna] == VACIA
 
 def hay_pieza_de_color(t : Tablero, pos : Posicion, col : Color) -> bool:
+    """
+    Chequea si en *pos* hay una pieza de color *col*.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la casilla.
+        col (Color): Color de la pieza que se busca.
+
+    Returns:
+        True si en *pos* hay una pieza de color *col* y False si no.
+
+    """
     c:Casilla = casilla_en_posicion(t,pos)
     return not hay_casilla_vacia(t,pos) and c.color == col
 
 #### Ejercicio 3
 
 def hay_casilla_vacia_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
+    """
+    Chequea si la casilla vecina a *pos* en la dirección *d* existe y está vacía.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la casilla.
+        d (Direccion): Dirección en la que se busca la casilla vecina.
+
+    Returns:
+        True si la casilla vecina a *pos* en la dirección *d* está dentro del tablero y vacía, y False si no.
+
+    """
     pos_vecina:Posicion = posicion_vecina_hacia(pos,d)
     res:bool = False
     if posicion_en_tablero(pos_vecina):
@@ -67,6 +134,19 @@ def hay_casilla_vacia_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
     return res
 
 def hay_pieza_amiga_vecina(t : Tablero, pos : Posicion) -> bool:
+    """
+    Chequea si la pieza en *pos* tiene alguna pieza amiga vecina.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos) and not hay_casilla_vacia(t, pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la pieza.
+
+    Returns:
+        True si la pieza en *pos* tiene al menos una pieza de su mismo color al norte, sur, este u oeste, y False si no.
+
+    """
     encontro_pieza_amiga:bool = False
     i:int = 0
     direcciones:list[Direccion] = [NORTE,SUR,ESTE,OESTE]
@@ -77,6 +157,20 @@ def hay_pieza_amiga_vecina(t : Tablero, pos : Posicion) -> bool:
     return encontro_pieza_amiga
 
 def aux_hay_pieza_amiga_hacia(t:Tablero, pos:Posicion, d: Direccion) -> bool:
+    """
+    Chequea si la pieza en *pos* tiene una pieza amiga vecina en la dirección *d*.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la pieza.
+        d (Direccion): Dirección en la que se busca la pieza amiga.
+
+    Returns:
+        True si en *pos* hay una pieza y su casilla vecina en la dirección *d* tiene una pieza de su mismo color, y False si no.
+
+    """
     res:bool = False
     if not hay_casilla_vacia(t,pos):
         c:Casilla = casilla_en_posicion(t,pos)
@@ -85,6 +179,20 @@ def aux_hay_pieza_amiga_hacia(t:Tablero, pos:Posicion, d: Direccion) -> bool:
     return res
 
 def hay_pieza_enemiga_mas_debil_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
+    """
+    Chequea si la pieza en *pos* tiene una pieza enemiga más débil vecina en la dirección *d*.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos) and not hay_casilla_vacia(t, pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la pieza.
+        d (Direccion): Dirección en la que se busca la pieza enemiga.
+
+    Returns:
+        True si la casilla vecina a *pos* en la dirección *d* tiene una pieza enemiga más débil que la pieza en *pos*, y False si no.
+
+    """
     res:bool = False
     if aux_hay_pieza_enemiga_hacia_direccion(t,pos,d):
         pos_hacia:Posicion = posicion_vecina_hacia(pos,d)
@@ -96,6 +204,19 @@ def hay_pieza_enemiga_mas_debil_hacia(t : Tablero, pos : Posicion, d : Direccion
     return res
 
 def hay_pieza_enemiga_mas_fuerte_vecina(t : Tablero, pos : Posicion) -> bool:
+    """
+    Chequea si la pieza en *pos* tiene alguna pieza enemiga más fuerte vecina.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos) and not hay_casilla_vacia(t, pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la pieza.
+
+    Returns:
+        True si la pieza en *pos* tiene al menos una pieza enemiga más fuerte al norte, sur, este u oeste, y False si no.
+
+    """
     encontro_pieza_enemiga_mas_fuerte:bool = False
     i:int = 0
     direcciones:list[Direccion] = [NORTE,SUR,ESTE,OESTE]
@@ -106,6 +227,20 @@ def hay_pieza_enemiga_mas_fuerte_vecina(t : Tablero, pos : Posicion) -> bool:
     return encontro_pieza_enemiga_mas_fuerte
 
 def aux_hay_pieza_enemiga_mas_fuerte_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
+    """
+    Chequea si la pieza en *pos* tiene una pieza enemiga más fuerte vecina en la dirección *d*.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos) and not hay_casilla_vacia(t, pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la pieza.
+        d (Direccion): Dirección en la que se busca la pieza enemiga.
+
+    Returns:
+        True si la casilla vecina a *pos* en la dirección *d* tiene una pieza enemiga más fuerte que la pieza en *pos*, y False si no.
+
+    """
     res:bool = False
     if aux_hay_pieza_enemiga_hacia_direccion(t,pos,d):
         pos_hacia:Posicion = posicion_vecina_hacia(pos,d)
@@ -117,11 +252,38 @@ def aux_hay_pieza_enemiga_mas_fuerte_hacia(t : Tablero, pos : Posicion, d : Dire
     return res
 
 def aux_hay_pieza_enemiga_hacia_direccion(t:Tablero, pos:Posicion, d: Direccion) -> bool:
+    """
+    Chequea si la pieza en *pos* tiene una pieza enemiga vecina en la dirección *d*.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos) and not hay_casilla_vacia(t, pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la pieza.
+        d (Direccion): Dirección en la que se busca la pieza enemiga.
+
+    Returns:
+        True si la casilla vecina a *pos* en la dirección *d* está dentro del tablero y tiene una pieza del color opuesto, y False si no.
+
+    """
     pos_hacia:Posicion = posicion_vecina_hacia(pos,d)
     c:Casilla = casilla_en_posicion(t,pos)
     return posicion_en_tablero(pos_hacia) and hay_pieza_de_color(t,pos_hacia,oponente(c.color))
 
 def hay_pieza_congelada(t : Tablero, pos : Posicion) -> bool:
+    """
+    Chequea si en *pos* hay una pieza congelada.
+
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+
+    Args:
+        t (Tablero): Tablero del juego.
+        pos (Posicion): Posición de la casilla.
+
+    Returns:
+        True si en *pos* hay una pieza con alguna pieza enemiga más fuerte vecina y ninguna pieza amiga vecina, y False si no.
+
+    """
     res: bool = False
     c:Casilla = casilla_en_posicion(t,pos)
     if not hay_casilla_vacia(t,pos):
