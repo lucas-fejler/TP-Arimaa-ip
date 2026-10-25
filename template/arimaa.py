@@ -136,7 +136,15 @@ def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool:
 #### Ejercicio 5
 
 def activar_trampas(t : Tablero) -> Tablero:
-    raise Exception("No implementado")
+    tablero_con_trampas_activadas : Tablero = []
+    for i in range(len(t)):
+        tablero_con_trampas_activadas.append([])
+        for casilla in t[i]:
+            tablero_con_trampas_activadas[i].append(casilla)
+    for trampa in POSICIONES_TRAMPA:
+        if not hay_casilla_vacia(tablero_con_trampas_activadas,trampa) and not hay_pieza_amiga_vecina(tablero_con_trampas_activadas,trampa):
+            tablero_con_trampas_activadas[trampa.fila][trampa.columna]= VACIA
+    return tablero_con_trampas_activadas
 
 #### Ejercicio 6
 
