@@ -85,20 +85,41 @@ def aux_hay_pieza_amiga_hacia(t:Tablero, pos:Posicion, d: Direccion) -> bool:
     return res
 
 def hay_pieza_enemiga_mas_debil_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
-    res: bool = False
-    pos_hacia:Posicion = posicion_vecina_hacia(pos,d)
-    if posicion_en_tablero(pos_hacia) and not hay_casilla_vacia(t,pos_hacia):
+    res:bool = False
+    if aux_hay_pieza_enemiga_hacia_direccion(t,pos,d):
+        pos_hacia:Posicion = posicion_vecina_hacia(pos,d)
         c_vecina : Casilla = casilla_en_posicion(t,pos_hacia)
-        f_vecina : Figura = c_vecina.figura
-        col_vecino : Color = c_vecina.color
         c:Casilla = casilla_en_posicion(t,pos)
         f:Figura = c.figura
-        col:Color = c.color
-        res = col_vecino == oponente(col) and fuerza(f) > fuerza(f_vecina)
+        f_vecina : Figura = c_vecina.figura
+        res = fuerza(f) > fuerza(f_vecina)
     return res
 
 def hay_pieza_enemiga_mas_fuerte_vecina(t : Tablero, pos : Posicion) -> bool:
-    raise Exception("No implementado")
+    encontro_pieza_enemiga_mas_fuerte:bool = False
+    i:int = 0
+    direcciones:list[Direccion] = [NORTE,SUR,ESTE,OESTE]
+    while i < len(direcciones) and not encontro_pieza_enemiga_mas_fuerte:
+        d:Direccion = direcciones[i]
+        encontro_pieza_enemiga_mas_fuerte = aux_hay_pieza_enemiga_mas_fuerte_hacia(t,pos,d)
+        i+=1
+    return encontro_pieza_enemiga_mas_fuerte
+
+def aux_hay_pieza_enemiga_mas_fuerte_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
+    res:bool = False
+    if aux_hay_pieza_enemiga_hacia_direccion(t,pos,d):
+        pos_hacia:Posicion = posicion_vecina_hacia(pos,d)
+        c_vecina : Casilla = casilla_en_posicion(t,pos_hacia)
+        c:Casilla = casilla_en_posicion(t,pos)
+        f:Figura = c.figura
+        f_vecina : Figura = c_vecina.figura
+        res = fuerza(f) < fuerza(f_vecina)
+    return res
+
+def aux_hay_pieza_enemiga_hacia_direccion(t:Tablero, pos:Posicion, d: Direccion) -> bool:
+    pos_hacia:Posicion = posicion_vecina_hacia(pos,d)
+    c:Casilla = casilla_en_posicion(t,pos)
+    return posicion_en_tablero(pos_hacia) and hay_pieza_de_color(t,pos_hacia,oponente(c.color))
 
 def hay_pieza_congelada(t : Tablero, pos : Posicion) -> bool:
     raise Exception("No implementado")
