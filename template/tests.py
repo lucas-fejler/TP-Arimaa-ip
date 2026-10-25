@@ -227,36 +227,115 @@ class test_activar_trampas(unittest.TestCase):
 
 #### Ejercicio 6
 
+def tablero_con_piezas(piezas):
+    """Auxiliar para armar tableros rápido en los tests."""
+    t = tablero_8x8_vacio()
+    for pos, p in piezas:
+        t[pos.fila][pos.columna] = p
+    return t
+
+
 class test_realizar_movimiento(unittest.TestCase):
- 
-    def test_mover_a_secas(self):
-        t0 = leer_tablero([
-               'rrrrrrrr', #7
-               'ccddhh-e', #6
-               '--------', #5
-               '---m----', #4
-               '--------', #3
-               '--------', #2
-               'EMHHDDCC', #1
-               'RRRRRRRR', #0
-               #01234567
-             ])
-        tN = leer_tablero([
-               'rrrrrrrr', #7
-               'ccddhh-e', #6
-               '---m----', #5
-               '--------', #4
-               '--------', #3
-               '--------', #2
-               'EMHHDDCC', #1
-               'RRRRRRRR', #0
-               #01234567
-             ])
-        j0 = Juego(t0, PLATEADO, 0) 
-        jN = Juego(tN, PLATEADO, 1) 
-        mN = Movimiento(MOVER_A_SECAS, Posicion(4, 3), [NORTE])
-        self.assertTrue(puede_realizar_movimiento(j0, mN))
-        self.assertEqual(realizar_movimiento(j0, mN), jN)
+
+    def test_mover_secas_ok(self):
+        origen = Posicion(3, 3)
+        destino = Posicion(4, 3)
+        t = tablero_con_piezas([(origen, Pieza(CONEJO, DORADO))])
+        esperado = tablero_con_piezas([(destino, Pieza(CONEJO, DORADO))])
+        j = Juego(t, DORADO, 1)
+        m = Movimiento(MOVER_A_SECAS, origen, [NORTE])
+
+        res = realizar_movimiento(j, m)
+
+        self.assertEqual(res.tablero, esperado)
+        self.assertEqual(res.turno, DORADO)
+        self.assertEqual(res.pasos_consumidos, 2)
+
+    def test_mover_secas_cambia_turno(self):
+        origen = Posicion(3, 3)
+        destino = Posicion(4, 3)
+        t = tablero_con_piezas([(origen, Pieza(CONEJO, DORADO))])
+        esperado = tablero_con_piezas([(destino, Pieza(CONEJO, DORADO))])
+        j = Juego(t, DORADO, 3) # Con este llega a 4 y corta
+        m = Movimiento(MOVER_A_SECAS, origen, [NORTE])
+
+        res = realizar_movimiento(j, m)
+
+        self.assertEqual(res.tablero, esperado)
+        self.assertEqual(res.turno, PLATEADO)
+        self.assertEqual(res.pasos_consumidos, 0)
+
+    def test_aux_mover_secas(self):
+        origen = Posicion(3, 3)
+        t = tablero_con_piezas([(origen, Pieza(CONEJO, DORADO))])
+        esperado = tablero_con_piezas([(Posicion(4, 3), Pieza(CONEJO, DORADO))])
+
+        res = tablero_post_mover_a_secas(t, origen, NORTE)
+        self.assertEqual(res, esperado)
+
+    def test_aux_arrastrar(self):
+        origen = Posicion(3, 3)
+        t = tablero_con_piezas([
+            (origen, Pieza(CABALLO, DORADO)),
+            (Posicion(3, 4), Pieza(CONEJO, PLATEADO)),
+        ])
+        esperado = tablero_con_piezas([
+            (Posicion(4, 3), Pieza(CABALLO, DORADO)),
+            (origen, Pieza(CONEJO, PLATEADO)),
+        ])
+
+        res = tablero_post_arrastrar(t, origen, NORTE, OESTE)
+        self.assertEqual(res, esperado)
+
+    def test_aux_empujar(self):
+        origen = Posicion(3, 3)
+        t = tablero_con_piezas([
+            (origen, Pieza(CABALLO, DORADO)),
+            (Posicion(4, 3), Pieza(CONEJO, PLATEADO)),
+        ])
+        esperado = tablero_con_piezas([
+            (Posicion(4, 3), Pieza(CABALLO, DORADO)),
+            (Posicion(4, 4), Pieza(CONEJO, PLATEADO)),
+        ])
+
+        res = tablero_post_empujar(t, origen, NORTE, ESTE)
+        self.assertEqual(res, esperado)
+
+    def test_despachador_acciones(self):
+        origen = Posicion(3, 3)
+        t = tablero_con_piezas([(origen, Pieza(CONEJO, DORADO))])
+        esperado = tablero_con_piezas([(Posicion(4, 3), Pieza(CONEJO, DORADO))])
+        m = Movimiento(MOVER_A_SECAS, origen, [NORTE])
+        self.assertEqual(tablero_post_movimiento(t, m), esperado)
+
+    def test_arrastre_acumula_pasos(self):
+        origen = Posicion(3, 3)
+        t = tablero_con_piezas([
+            (origen, Pieza(CABALLO, DORADO)),
+            (Posicion(3, 4), Pieza(CONEJO, PLATEADO)),
+        ])
+        esperado = tablero_con_piezas([
+            (Posicion(4, 3), Pieza(CABALLO, DORADO)),
+            (origen, Pieza(CONEJO, PLATEADO)),
+        ])
+        j = Juego(t, DORADO, 0)
+        m = Movimiento(ARRASTRAR, origen, [NORTE, OESTE])
+
+        res = realizar_movimiento(j, m)
+
+        self.assertEqual(res.tablero, esperado)
+        self.assertEqual(res.turno, DORADO)
+        self.assertEqual(res.pasos_consumidos, 2)
+
+    def test_inmutabilidad_tablero(self):
+        origen = Posicion(3, 3)
+        t = tablero_con_piezas([(origen, Pieza(CONEJO, DORADO))])
+        t_copia = [fila[:] for fila in t]
+        m = Movimiento(MOVER_A_SECAS, origen, [NORTE])
+
+        realizar_movimiento(Juego(t, DORADO, 0), m)
+
+        self.assertEqual(t, t_copia)
 
 #### Ejercicio 7
 
@@ -277,4 +356,3 @@ class test_ganador_del_juego(unittest.TestCase):
         j = Juego(t, PLATEADO, 0)
         self.assertTrue(hay_ganador_determinado(j))
         self.assertEqual(ganador_del_juego(j), DORADO)
-
