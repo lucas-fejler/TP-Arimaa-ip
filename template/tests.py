@@ -225,6 +225,221 @@ class test_activar_trampas(unittest.TestCase):
         self.assertNotEqual(t0, t1)
         self.assertEqual(t2, t1)
 
+    def test_trampas_vacias(self):
+        t0 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-------', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'R-------', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t1 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-------', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'R-------', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t2 = activar_trampas(t0)
+        self.assertEqual(t2, t1)
+
+    def test_pieza_amiga_al_norte(self):
+        t0 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-r--E--', #5
+               '-H--r-Cr', #4
+               'R-R-----', #3
+               'R-H--m--', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t1 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-------', #5
+               '-H--r-Cr', #4
+               'R-R-----', #3
+               'R-H-----', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t2 = activar_trampas(t0)
+        self.assertNotEqual(t0, t1)
+        self.assertEqual(t2, t1)
+
+    def test_pieza_amiga_al_sur(self):
+        t0 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-r--E--', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'R-H--m--', #2
+               'R-R-----', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t1 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-------', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'R-H-----', #2
+               'R-R-----', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t2 = activar_trampas(t0)
+        self.assertNotEqual(t0, t1)
+        self.assertEqual(t2, t1)
+
+    def test_pieza_amiga_al_este(self):
+        t0 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-r--E--', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'R-HR-m--', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t1 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-------', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'R-HR----', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t2 = activar_trampas(t0)
+        self.assertNotEqual(t0, t1)
+        self.assertEqual(t2, t1)
+
+    def test_pieza_amiga_al_oeste(self):
+        t0 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-r--E--', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'RRH--m--', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t1 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-------', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'RRH-----', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t2 = activar_trampas(t0)
+        self.assertNotEqual(t0, t1)
+        self.assertEqual(t2, t1)
+
+    def test_pieza_plateada_con_amiga(self):
+        t0 = leer_tablero([
+               '-eRD--rd', #7
+               '--c-----', #6
+               'H-r--E--', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'R-H--m--', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t1 = leer_tablero([
+               '-eRD--rd', #7
+               '--c-----', #6
+               'H-r-----', #5
+               '-H--r-Cr', #4
+               'R-------', #3
+               'R-------', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t2 = activar_trampas(t0)
+        self.assertNotEqual(t0, t1)
+        self.assertEqual(t2, t1)
+
+    def test_pieza_solo_con_enemigas_vecinas(self):
+        t0 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-r--E--', #5
+               '-H--r-Cr', #4
+               'R-r-----', #3
+               'RrHr-m--', #2
+               'R-r-----', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t1 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-------', #5
+               '-H--r-Cr', #4
+               'R-r-----', #3
+               'Rr-r----', #2
+               'R-r-----', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t2 = activar_trampas(t0)
+        self.assertNotEqual(t0, t1)
+        self.assertEqual(t2, t1)
+
+    def test_pieza_amiga_en_diagonal(self):
+        t0 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-r--E--', #5
+               '-H--r-Cr', #4
+               'R--R----', #3
+               'R-H--m--', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t1 = leer_tablero([
+               '-eRD--rd', #7
+               '--------', #6
+               'H-------', #5
+               '-H--r-Cr', #4
+               'R--R----', #3
+               'R-------', #2
+               'R-------', #1
+               'c-D---R-', #0
+               #01234567
+             ])
+        t2 = activar_trampas(t0)
+        self.assertNotEqual(t0, t1)
+        self.assertEqual(t2, t1)
+
 #### Ejercicio 6
 
 class test_realizar_movimiento(unittest.TestCase):

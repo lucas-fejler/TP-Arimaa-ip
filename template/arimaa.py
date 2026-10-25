@@ -136,6 +136,18 @@ def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool:
 #### Ejercicio 5
 
 def activar_trampas(t : Tablero) -> Tablero:
+    """
+    Devuelve una copia de *t* en la que se eliminan las piezas que están en una trampa sin ninguna pieza amiga vecina.
+
+    PRE: tablero_bien_formado(t)
+
+    Args:
+        t (Tablero): Tablero del juego.
+
+    Returns:
+        Un tablero nuevo igual a *t*, salvo que las trampas ocupadas por una pieza sin piezas amigas vecinas quedan vacías.
+
+    """
     tablero_con_trampas_activadas : Tablero = []
     for i in range(len(t)):
         tablero_con_trampas_activadas.append([])
