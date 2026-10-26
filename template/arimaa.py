@@ -79,83 +79,124 @@ def activar_trampas(t : Tablero) -> Tablero:
 
 def realizar_movimiento(j: Juego, m: Movimiento) -> Juego:
     """
-    Devuelve el juego que resulta de realizar el movimiento m en el juego j.
-    Si con este movimiento se completan los pasos del turno, el turno pasa al oponente.
+    Devuelve el juego resultante de realizar un movimiento válido.
 
-    PRE: juego_bien_formado(j), movimiento_bien_formado(m) y puede_realizar_movimiento(j, m)
+    PRE: juego_bien_formado(j) and movimiento_bien_formado(m) and puede_realizar_movimiento(j, m)
+    
+    Args:
+         j (Juego): El estado actual del juego antes de realizar el movimiento.
+         m (Movimiento): El movimiento válido que se desea ejecutar.
+    
+    Returns:
+            El juego resultante con el tablero actualizado, los pasos consumidos y el turno avanzado si corresponde.
     """
     nuevo_tablero = tablero_post_movimiento(j.tablero, m)
     nuevos_pasos = j.pasos_consumidos + len(m.pasos)
     
     if nuevos_pasos == MAX_PASOS:
-        return Juego(nuevo_tablero, oponente(j.turno), 0)
+        res = Juego(nuevo_tablero, oponente(j.turno), 0)
     else:
-        return Juego(nuevo_tablero, j.turno, nuevos_pasos)
+        res = Juego(nuevo_tablero, j.turno, nuevos_pasos)
+        
+    return res
 
 
 def tablero_post_movimiento(t: Tablero, m: Movimiento) -> Tablero:
     """
-    Devuelve el tablero que resulta de aplicar el movimiento m, según cuál sea su acción.
+    Despacha y calcula el tablero resultante según la acción especificada en el movimiento.
 
-    PRE: tablero_bien_formado(t) y movimiento_bien_formado(m)
+    PRE: tablero_bien_formado(t) and movimiento_bien_formado(m)
+    
+    Args:
+         t (Tablero): El estado actual del tablero.
+         m (Movimiento): El movimiento que define la acción a realizar.
+    
+    Returns:
+            El tablero resultante tras aplicar la acción correspondiente.
     """
     if m.accion == MOVER_A_SECAS:
-        return tablero_post_mover_a_secas(t, m.origen, m.pasos[0])
+        res = tablero_post_mover_a_secas(t, m.origen, m.pasos[0])
     elif m.accion == ARRASTRAR:
-        return tablero_post_arrastrar(t, m.origen, m.pasos[0], m.pasos[1])
-    else:  # EMPUJAR
-        return tablero_post_empujar(t, m.origen, m.pasos[0], m.pasos[1])
+        res = tablero_post_arrastrar(t, m.origen, m.pasos[0], m.pasos[1])
+    else:
+        res = tablero_post_empujar(t, m.origen, m.pasos[0], m.pasos[1])
+        
+    return res
 
 
 def tablero_post_mover_a_secas(t: Tablero, pos: Posicion, d: Direccion) -> Tablero:
     """
-    Devuelve el tablero que resulta de mover la pieza de pos una casilla hacia d.
+    Devuelve el tablero tras mover una pieza a una casilla vacía y activar trampas.
 
-    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y hay_casilla_vacia_hacia(t, pos, d)
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+    
+    Args:
+         t (Tablero): El tablero inicial.
+         pos (Posicion): La posición de origen de la pieza.
+         d (Direccion): La dirección hacia donde se mueve la pieza.
+    
+    Returns:
+            El tablero actualizado con la pieza reubicada y las trampas activadas.
     """
     destino = posicion_vecina_hacia(pos, d)
     tablero = [fila[:] for fila in t]
     tablero[destino.fila][destino.columna] = tablero[pos.fila][pos.columna]
     tablero[pos.fila][pos.columna] = VACIA
-    return activar_trampas(tablero)
+    res = activar_trampas(tablero)
+    
+    return res
 
 
 def tablero_post_arrastrar(t: Tablero, pos: Posicion, d: Direccion, d_arrastre: Direccion) -> Tablero:
     """
-    Devuelve el tablero que resulta de mover la pieza de pos hacia d,
-    arrastrando a la pieza enemiga que se mueve hacia d_arrastre.
+    Devuelve el tablero tras mover una pieza propia y arrastrar a una enemiga.
 
-    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y
-         hay_pieza_enemiga_mas_debil_hacia(t, pos, opuesta(d_arrastre))
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+    
+    Args:
+         t (Tablero): El tablero inicial.
+         pos (Posicion): La posición de origen de la pieza propia.
+         d (Direccion): La dirección de movimiento de la pieza propia.
+         d_arrastre (Direccion): La dirección de arrastre de la pieza oponente.
+    
+    Returns:
+            El tablero actualizado con ambas piezas desplazadas y las trampas activadas.
     """
     destino = posicion_vecina_hacia(pos, d)
     enemiga = posicion_vecina_hacia(pos, opuesta(d_arrastre))
     tablero = [fila[:] for fila in t]
-    
     tablero[destino.fila][destino.columna] = tablero[pos.fila][pos.columna]
     tablero[pos.fila][pos.columna] = tablero[enemiga.fila][enemiga.columna]
     tablero[enemiga.fila][enemiga.columna] = VACIA
+    res = activar_trampas(tablero)
     
-    return activar_trampas(tablero)
+    return res
 
 
 def tablero_post_empujar(t: Tablero, pos: Posicion, d: Direccion, d_empuje: Direccion) -> Tablero:
     """
-    Devuelve el tablero que resulta de que la pieza de pos empuje hacia d_empuje
-    a la pieza enemiga vecina en la dirección d, ocupando su lugar.
+    Devuelve el tablero tras empujar a una pieza enemiga y ocupar su lugar.
 
-    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y
-         hay_pieza_enemiga_mas_debil_hacia(t, pos, d)
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+    
+    Args:
+        t (Tablero): El tablero inicial.
+        pos (Posicion): La posición de origen de la pieza propia.
+        d (Direccion): La dirección hacia donde se empuja al oponente.
+        d_empuje (Direccion): La dirección de destino del oponente empujado.
+    
+    Returns:
+            El tablero actualizado tras el empuje y la activación de trampas.
     """
     enemiga = posicion_vecina_hacia(pos, d)
     destino_enemiga = posicion_vecina_hacia(enemiga, d_empuje)
     tablero = [fila[:] for fila in t]
-    
     tablero[destino_enemiga.fila][destino_enemiga.columna] = tablero[enemiga.fila][enemiga.columna]
     tablero[enemiga.fila][enemiga.columna] = tablero[pos.fila][pos.columna]
     tablero[pos.fila][pos.columna] = VACIA
+    res = activar_trampas(tablero)
     
-    return activar_trampas(tablero)
+    return res
 
 #### Ejercicio 7
 
