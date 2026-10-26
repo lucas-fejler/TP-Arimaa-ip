@@ -77,6 +77,27 @@ def activar_trampas(t : Tablero) -> Tablero:
 
 #### Ejercicio 6
 
+def copiar_tablero(t: Tablero) -> Tablero:
+    """
+    Devuelve una copia profunda del tablero utilizando bucles tradicionales.
+
+    PRE: tablero_bien_formado(t)
+    
+    Args:
+         t (Tablero): El tablero que se desea copiar.
+    
+    Returns:
+            Una nueva matriz idéntica a t pero independiente en memoria.
+    """
+    tablero = []
+    for fila in t:
+        nueva_fila = []
+        for casilla in fila:
+            nueva_fila.append(casilla)
+        tablero.append(nueva_fila)    
+    res = tablero
+    return res
+
 def realizar_movimiento(j: Juego, m: Movimiento) -> Juego:
     """
     Devuelve el juego resultante de realizar un movimiento válido.
@@ -96,10 +117,8 @@ def realizar_movimiento(j: Juego, m: Movimiento) -> Juego:
     if nuevos_pasos == MAX_PASOS:
         res = Juego(nuevo_tablero, oponente(j.turno), 0)
     else:
-        res = Juego(nuevo_tablero, j.turno, nuevos_pasos)
-        
+        res = Juego(nuevo_tablero, j.turno, nuevos_pasos)  
     return res
-
 
 def tablero_post_movimiento(t: Tablero, m: Movimiento) -> Tablero:
     """
@@ -119,10 +138,8 @@ def tablero_post_movimiento(t: Tablero, m: Movimiento) -> Tablero:
     elif m.accion == ARRASTRAR:
         res = tablero_post_arrastrar(t, m.origen, m.pasos[0], m.pasos[1])
     else:
-        res = tablero_post_empujar(t, m.origen, m.pasos[0], m.pasos[1])
-        
+        res = tablero_post_empujar(t, m.origen, m.pasos[0], m.pasos[1])   
     return res
-
 
 def tablero_post_mover_a_secas(t: Tablero, pos: Posicion, d: Direccion) -> Tablero:
     """
@@ -139,11 +156,10 @@ def tablero_post_mover_a_secas(t: Tablero, pos: Posicion, d: Direccion) -> Table
             El tablero actualizado con la pieza reubicada y las trampas activadas.
     """
     destino = posicion_vecina_hacia(pos, d)
-    tablero = [fila[:] for fila in t]
+    tablero = copiar_tablero(t)
     tablero[destino.fila][destino.columna] = tablero[pos.fila][pos.columna]
     tablero[pos.fila][pos.columna] = VACIA
     res = activar_trampas(tablero)
-    
     return res
 
 
@@ -164,12 +180,11 @@ def tablero_post_arrastrar(t: Tablero, pos: Posicion, d: Direccion, d_arrastre: 
     """
     destino = posicion_vecina_hacia(pos, d)
     enemiga = posicion_vecina_hacia(pos, opuesta(d_arrastre))
-    tablero = [fila[:] for fila in t]
+    tablero = copiar_tablero(t)
     tablero[destino.fila][destino.columna] = tablero[pos.fila][pos.columna]
     tablero[pos.fila][pos.columna] = tablero[enemiga.fila][enemiga.columna]
     tablero[enemiga.fila][enemiga.columna] = VACIA
     res = activar_trampas(tablero)
-    
     return res
 
 
@@ -180,22 +195,21 @@ def tablero_post_empujar(t: Tablero, pos: Posicion, d: Direccion, d_empuje: Dire
     PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
     
     Args:
-        t (Tablero): El tablero inicial.
-        pos (Posicion): La posición de origen de la pieza propia.
-        d (Direccion): La dirección hacia donde se empuja al oponente.
-        d_empuje (Direccion): La dirección de destino del oponente empujado.
+         t (Tablero): El tablero inicial.
+         pos (Posicion): La posición de origen de la pieza propia.
+         d (Direccion): La dirección hacia donde se empuja al oponente.
+         d_empuje (Direccion): La dirección de destino del oponente empujado.
     
     Returns:
             El tablero actualizado tras el empuje y la activación de trampas.
     """
     enemiga = posicion_vecina_hacia(pos, d)
     destino_enemiga = posicion_vecina_hacia(enemiga, d_empuje)
-    tablero = [fila[:] for fila in t]
+    tablero = copiar_tablero(t)
     tablero[destino_enemiga.fila][destino_enemiga.columna] = tablero[enemiga.fila][enemiga.columna]
     tablero[enemiga.fila][enemiga.columna] = tablero[pos.fila][pos.columna]
     tablero[pos.fila][pos.columna] = VACIA
     res = activar_trampas(tablero)
-    
     return res
 
 #### Ejercicio 7
