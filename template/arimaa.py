@@ -517,8 +517,85 @@ def activar_trampas(t : Tablero) -> Tablero:
 
 #### Ejercicio 6
 
-def realizar_movimiento(j : Juego, m : Movimiento) -> Juego:
-    raise Exception("No implementado")
+def realizar_movimiento(j: Juego, m: Movimiento) -> Juego:
+    """
+    Devuelve el juego que resulta de realizar el movimiento m en el juego j.
+    Si con este movimiento se completan los pasos del turno, el turno pasa al oponente.
+
+    PRE: juego_bien_formado(j), movimiento_bien_formado(m) y puede_realizar_movimiento(j, m)
+    """
+    nuevo_tablero = tablero_post_movimiento(j.tablero, m)
+    nuevos_pasos = j.pasos_consumidos + len(m.pasos)
+    
+    if nuevos_pasos == MAX_PASOS:
+        return Juego(nuevo_tablero, oponente(j.turno), 0)
+    else:
+        return Juego(nuevo_tablero, j.turno, nuevos_pasos)
+
+
+def tablero_post_movimiento(t: Tablero, m: Movimiento) -> Tablero:
+    """
+    Devuelve el tablero que resulta de aplicar el movimiento m, según cuál sea su acción.
+
+    PRE: tablero_bien_formado(t) y movimiento_bien_formado(m)
+    """
+    if m.accion == MOVER_A_SECAS:
+        return tablero_post_mover_a_secas(t, m.origen, m.pasos[0])
+    elif m.accion == ARRASTRAR:
+        return tablero_post_arrastrar(t, m.origen, m.pasos[0], m.pasos[1])
+    else:  # EMPUJAR
+        return tablero_post_empujar(t, m.origen, m.pasos[0], m.pasos[1])
+
+
+def tablero_post_mover_a_secas(t: Tablero, pos: Posicion, d: Direccion) -> Tablero:
+    """
+    Devuelve el tablero que resulta de mover la pieza de pos una casilla hacia d.
+
+    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y hay_casilla_vacia_hacia(t, pos, d)
+    """
+    destino = posicion_vecina_hacia(pos, d)
+    tablero = [fila[:] for fila in t]
+    tablero[destino.fila][destino.columna] = tablero[pos.fila][pos.columna]
+    tablero[pos.fila][pos.columna] = VACIA
+    return activar_trampas(tablero)
+
+
+def tablero_post_arrastrar(t: Tablero, pos: Posicion, d: Direccion, d_arrastre: Direccion) -> Tablero:
+    """
+    Devuelve el tablero que resulta de mover la pieza de pos hacia d,
+    arrastrando a la pieza enemiga que se mueve hacia d_arrastre.
+
+    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y
+         hay_pieza_enemiga_mas_debil_hacia(t, pos, opuesta(d_arrastre))
+    """
+    destino = posicion_vecina_hacia(pos, d)
+    enemiga = posicion_vecina_hacia(pos, opuesta(d_arrastre))
+    tablero = [fila[:] for fila in t]
+    
+    tablero[destino.fila][destino.columna] = tablero[pos.fila][pos.columna]
+    tablero[pos.fila][pos.columna] = tablero[enemiga.fila][enemiga.columna]
+    tablero[enemiga.fila][enemiga.columna] = VACIA
+    
+    return activar_trampas(tablero)
+
+
+def tablero_post_empujar(t: Tablero, pos: Posicion, d: Direccion, d_empuje: Direccion) -> Tablero:
+    """
+    Devuelve el tablero que resulta de que la pieza de pos empuje hacia d_empuje
+    a la pieza enemiga vecina en la dirección d, ocupando su lugar.
+
+    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y
+         hay_pieza_enemiga_mas_debil_hacia(t, pos, d)
+    """
+    enemiga = posicion_vecina_hacia(pos, d)
+    destino_enemiga = posicion_vecina_hacia(enemiga, d_empuje)
+    tablero = [fila[:] for fila in t]
+    
+    tablero[destino_enemiga.fila][destino_enemiga.columna] = tablero[enemiga.fila][enemiga.columna]
+    tablero[enemiga.fila][enemiga.columna] = tablero[pos.fila][pos.columna]
+    tablero[pos.fila][pos.columna] = VACIA
+    
+    return activar_trampas(tablero)
 
 #### Ejercicio 7
 
