@@ -79,17 +79,10 @@ def activar_trampas(t : Tablero) -> Tablero:
 
 def realizar_movimiento(j: Juego, m: Movimiento) -> Juego:
     """
-    Devuelve el estado del juego resultante de realizar un movimiento válido.
-    
-    PRE: juego_bien_formado(j) and movimiento_bien_formado(m) and puede_realizar_movimiento(j, m)
-    
-    Args:
-        j (Juego): El estado actual del juego antes de realizar el movimiento.
-        m (Movimiento): El movimiento válido que se desea ejecutar.
-        
-    Returns:
-        Un nuevo objeto Juego con el tablero actualizado, los pasos consumidos recalculados
-        y el turno avanzado en caso de corresponder.
+    Devuelve el juego que resulta de realizar el movimiento m en el juego j.
+    Si con este movimiento se completan los pasos del turno, el turno pasa al oponente.
+
+    PRE: juego_bien_formado(j), movimiento_bien_formado(m) y puede_realizar_movimiento(j, m)
     """
     nuevo_tablero = tablero_post_movimiento(j.tablero, m)
     nuevos_pasos = j.pasos_consumidos + len(m.pasos)
@@ -102,16 +95,9 @@ def realizar_movimiento(j: Juego, m: Movimiento) -> Juego:
 
 def tablero_post_movimiento(t: Tablero, m: Movimiento) -> Tablero:
     """
-    Despacha y calcula el tablero resultante según la acción especificada en el movimiento.
-    
-    PRE: tablero_bien_formado(t) and movimiento_bien_formado(m)
-    
-    Args:
-        t (Tablero): El estado actual del tablero.
-        m (Movimiento): El movimiento que define la acción a realizar.
-        
-    Returns:
-        El tablero resultante tras aplicar la acción correspondiente y activar las trampas.
+    Devuelve el tablero que resulta de aplicar el movimiento m, según cuál sea su acción.
+
+    PRE: tablero_bien_formado(t) y movimiento_bien_formado(m)
     """
     if m.accion == MOVER_A_SECAS:
         return tablero_post_mover_a_secas(t, m.origen, m.pasos[0])
@@ -123,17 +109,9 @@ def tablero_post_movimiento(t: Tablero, m: Movimiento) -> Tablero:
 
 def tablero_post_mover_a_secas(t: Tablero, pos: Posicion, d: Direccion) -> Tablero:
     """
-    Devuelve el tablero tras mover una pieza propia a una casilla vecina vacía y activar las trampas.
-    
-    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
-    
-    Args:
-        t (Tablero): El tablero inicial.
-        pos (Posicion): La posición de origen de la pieza que se mueve.
-        d (Direccion): La dirección hacia donde se mueve la pieza.
-        
-    Returns:
-        El tablero actualizado con la pieza reubicada y las trampas evaluadas.
+    Devuelve el tablero que resulta de mover la pieza de pos una casilla hacia d.
+
+    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y hay_casilla_vacia_hacia(t, pos, d)
     """
     destino = posicion_vecina_hacia(pos, d)
     tablero = [fila[:] for fila in t]
@@ -144,18 +122,11 @@ def tablero_post_mover_a_secas(t: Tablero, pos: Posicion, d: Direccion) -> Table
 
 def tablero_post_arrastrar(t: Tablero, pos: Posicion, d: Direccion, d_arrastre: Direccion) -> Tablero:
     """
-    Devuelve el tablero tras mover una pieza propia y arrastrar consigo a una pieza enemiga adyacente.
-    
-    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
-    
-    Args:
-        t (Tablero): El tablero inicial.
-        pos (Posicion): La posición de origen de la pieza propia.
-        d (Direccion): La dirección de movimiento de la pieza propia.
-        d_arrastre (Direccion): La dirección de arrastre de la pieza oponente.
-        
-    Returns:
-        El tablero actualizado con ambas piezas desplazadas y las trampas evaluadas.
+    Devuelve el tablero que resulta de mover la pieza de pos hacia d,
+    arrastrando a la pieza enemiga que se mueve hacia d_arrastre.
+
+    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y
+         hay_pieza_enemiga_mas_debil_hacia(t, pos, opuesta(d_arrastre))
     """
     destino = posicion_vecina_hacia(pos, d)
     enemiga = posicion_vecina_hacia(pos, opuesta(d_arrastre))
@@ -170,18 +141,11 @@ def tablero_post_arrastrar(t: Tablero, pos: Posicion, d: Direccion, d_arrastre: 
 
 def tablero_post_empujar(t: Tablero, pos: Posicion, d: Direccion, d_empuje: Direccion) -> Tablero:
     """
-    Devuelve el tablero tras empujar a una pieza enemiga adyacente y ocupar su lugar.
-    
-    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
-    
-    Args:
-        t (Tablero): El tablero inicial.
-        pos (Posicion): La posición de origen de la pieza propia.
-        d (Direccion): La dirección hacia donde se empuja al oponente.
-        d_empuje (Direccion): La dirección de destino del oponente empujado.
-        
-    Returns:
-        El tablero actualizado tras el empuje de ambas piezas y la evaluación de trampas.
+    Devuelve el tablero que resulta de que la pieza de pos empuje hacia d_empuje
+    a la pieza enemiga vecina en la dirección d, ocupando su lugar.
+
+    PRE: tablero_bien_formado(t), posicion_en_tablero(pos) y
+         hay_pieza_enemiga_mas_debil_hacia(t, pos, d)
     """
     enemiga = posicion_vecina_hacia(pos, d)
     destino_enemiga = posicion_vecina_hacia(enemiga, d_empuje)
