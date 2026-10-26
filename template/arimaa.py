@@ -515,6 +515,10 @@ def activar_trampas(t : Tablero) -> Tablero:
             tablero_con_trampas_activadas[trampa.fila][trampa.columna]= VACIA
     return tablero_con_trampas_activadas
 
+#### Ejercicio 6
+
+def realizar_movimiento(j : Juego, m : Movimiento) -> Juego:
+    raise Exception("No implementado")
 
 #### Ejercicio 7
 
