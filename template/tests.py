@@ -227,8 +227,6 @@ class test_activar_trampas(unittest.TestCase):
 
 #### Ejercicio 6
 
-#### Ejercicio 6
-
 def tablero_con_piezas(piezas):
     """Auxiliar para armar tableros rápido en los tests."""
     t = tablero_8x8_vacio()
