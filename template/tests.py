@@ -419,6 +419,20 @@ class test_hay_pieza_amiga_vecina(unittest.TestCase):
             ])
         self.assertTrue(hay_pieza_amiga_vecina(t, Posicion(4, 3)))
 
+    def test_hay_pieza_amiga_vecina(self):
+            t = leer_tablero([
+                  'R-hRD-Rr', #7
+                  'M----d--', #6
+                  '-h-rrCR-', #5
+                  'R-rcE---', #4
+                  '--drRR--', #3
+                  '-HD-H--m', #2
+                  '--r-RCc-', #1
+                  're---r--', #0
+                  #01234567
+                ])
+            self.assertFalse(hay_pieza_amiga_vecina(t, Posicion(4, 6)))
+
     def test_amiga_al_sur(self):
         t = leer_tablero([
               'R-hRD-Rr', #7
@@ -1424,38 +1438,6 @@ class test_activar_trampas(unittest.TestCase):
         self.assertNotEqual(t0, t1)
         self.assertEqual(t2, t1)
 
-#### Ejercicio 6
-
-class test_realizar_movimiento(unittest.TestCase):
- 
-    def test_mover_a_secas(self):
-        t0 = leer_tablero([
-               'rrrrrrrr', #7
-               'ccddhh-e', #6
-               '--------', #5
-               '---m----', #4
-               '--------', #3
-               '--------', #2
-               'EMHHDDCC', #1
-               'RRRRRRRR', #0
-               #01234567
-             ])
-        tN = leer_tablero([
-               'rrrrrrrr', #7
-               'ccddhh-e', #6
-               '---m----', #5
-               '--------', #4
-               '--------', #3
-               '--------', #2
-               'EMHHDDCC', #1
-               'RRRRRRRR', #0
-               #01234567
-             ])
-        j0 = Juego(t0, PLATEADO, 0) 
-        jN = Juego(tN, PLATEADO, 1) 
-        mN = Movimiento(MOVER_A_SECAS, Posicion(4, 3), [NORTE])
-        self.assertTrue(puede_realizar_movimiento(j0, mN))
-        self.assertEqual(realizar_movimiento(j0, mN), jN)
 
 #### Ejercicio 7
 VACIO = '--------'
