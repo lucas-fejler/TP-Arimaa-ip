@@ -227,6 +227,8 @@ class test_activar_trampas(unittest.TestCase):
 
 #### Ejercicio 6
 
+#### Ejercicio 6
+
 def tablero_con_piezas(piezas):
     """Auxiliar para armar tableros rápido en los tests."""
     t = tablero_8x8_vacio()
@@ -327,12 +329,45 @@ class test_realizar_movimiento(unittest.TestCase):
         self.assertEqual(res.turno, DORADO)
         self.assertEqual(res.pasos_consumidos, 2)
 
+    def test_realizar_movimiento_empujar(self):
+        """Cubre la acción EMPUJAR y la rama else del despachador."""
+        origen = Posicion(3, 3)
+        t = tablero_con_piezas([
+            (origen, Pieza(CABALLO, DORADO)),
+            (Posicion(3, 4), Pieza(CONEJO, PLATEADO)),
+        ])
+        j = Juego(t, DORADO, 0)
+        m = Movimiento(EMPUJAR, origen, [ESTE, NORTE])
+
+        res = realizar_movimiento(j, m)
+        self.assertEqual(res.turno, DORADO)
+        self.assertEqual(res.pasos_consumidos, 2)
+
+    def test_realizar_movimiento_activa_trampa(self):
+        """Verifica que se disparen las trampas correctamente al mover una pieza."""
+        origen = Posicion(2, 1)
+        t = tablero_con_piezas([
+            (origen, Pieza(CONEJO, DORADO)),
+        ])
+        m = Movimiento(MOVER_A_SECAS, origen, [ESTE])
+        res = tablero_post_movimiento(t, m)
+        
+        #No hay piezas amigas adyacentes = VACIA
+        self.assertEqual(res[2][2], VACIA)
+
     def test_inmutabilidad_tablero(self):
         origen = Posicion(3, 3)
         t = tablero_con_piezas([(origen, Pieza(CONEJO, DORADO))])
-        t_copia = [fila[:] for fila in t]
+        
+        # Copia manual del tablero
+        t_copia = []
+        for fila in t:
+            nueva_fila = []
+            for casilla in fila:
+                nueva_fila.append(casilla)
+            t_copia.append(nueva_fila)
+            
         m = Movimiento(MOVER_A_SECAS, origen, [NORTE])
-
         realizar_movimiento(Juego(t, DORADO, 0), m)
 
         self.assertEqual(t, t_copia)
