@@ -1114,6 +1114,69 @@ class test_puede_realizar_movimiento(unittest.TestCase):
         j = Juego(t, PLATEADO, 0)
         m = Movimiento(EMPUJAR, Posicion(0, 1), [ESTE,NORTE])
         self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_completar_exactamente_cuatro_pasos(self):
+        t = leer_tablero([
+              '--------', #7
+              '--------', #6
+              '--------', #5
+              '--------', #4
+              '---Hr---', #3
+              '--------', #2
+              '--------', #1
+              '--------', #0
+              #01234567
+            ])
+        j = Juego(t, DORADO, 3)
+        m = Movimiento(MOVER_A_SECAS, Posicion(3, 3), [NORTE])
+        self.assertTrue(puede_realizar_movimiento(j, m))
+
+        j = Juego(t, DORADO, 2)
+        m = Movimiento(ARRASTRAR, Posicion(3, 3), [NORTE, OESTE])
+        self.assertTrue(puede_realizar_movimiento(j, m))
+
+        m = Movimiento(EMPUJAR, Posicion(3, 3), [ESTE, NORTE])
+        self.assertTrue(puede_realizar_movimiento(j, m))
+
+    def test_no_puede_mover_pieza_del_oponente(self):
+        t = leer_tablero([
+              '--------', #7
+              '--------', #6
+              '--------', #5
+              '--------', #4
+              '---h----', #3
+              '--------', #2
+              '--------', #1
+              '--------', #0
+              #01234567
+            ])
+        j = Juego(t, DORADO, 0)
+        m = Movimiento(MOVER_A_SECAS, Posicion(3, 3), [NORTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+
+    def test_arrastrar_sin_lugar(self):
+        t = leer_tablero([
+              '--------', #7
+              '--------', #6
+              '--------', #5
+              '---C----', #4
+              '---Hr---', #3
+              '--------', #2
+              '--------', #1
+              '--------', #0
+              #01234567
+            ])
+        j = Juego(t, DORADO, 0)
+        m = Movimiento(ARRASTRAR, Posicion(3, 3), [NORTE, OESTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+
+class test_direccion_de_movimiento_habilitada(unittest.TestCase):
+
+    def test_casilla_vacia(self):
+        t = tablero_8x8_vacio()
+        self.assertFalse(
+            direccion_de_movimiento_habilitada(t, Posicion(3, 3), NORTE)
+        )
 
 #### Ejercicio 5
 
@@ -1361,18 +1424,6 @@ class test_activar_trampas(unittest.TestCase):
         self.assertNotEqual(t0, t1)
         self.assertEqual(t2, t1)
 
-#### Ejercicio 6
-
-def tablero_con_piezas(piezas):
-    """Auxiliar para armar tableros rápido en los tests."""
-    t = tablero_8x8_vacio()
-    for pos, p in piezas:
-        t[pos.fila][pos.columna] = p
-    return t
-
-
-class test_realizar_movimiento(unittest.TestCase):
- 
 #### Ejercicio 6
 
 def tablero_con_piezas(piezas):
