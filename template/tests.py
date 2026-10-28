@@ -953,6 +953,23 @@ class test_puede_realizar_movimiento(unittest.TestCase):
         j:Juego =  Juego(t, PLATEADO, 0)
         m:Movimiento =  Movimiento(EMPUJAR, Posicion(0, 1), [ESTE,ESTE])
         self.assertTrue(puede_realizar_movimiento(j, m))
+
+    def test_intento_empujar_pieza_mas_fuerte(self):
+        t:Tablero =  leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+              #01234567
+            ])
+        j:Juego =  Juego(t, PLATEADO, 0)
+        m:Movimiento =  Movimiento(EMPUJAR, Posicion(0, 2), [OESTE,OESTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
                 
     def test_direccion_permitida_conejo_dorado(self):
         t:Tablero =  leer_tablero([
