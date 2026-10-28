@@ -708,10 +708,9 @@ def hay_conejo_en_fila_inicial_oponente(j: Juego, col: Color)-> bool:
     """
 
     hay:bool=False
-    if col==PLATEADO:
-        fila_inicial_oponente:int=0
+    fila_inicial_oponente:int=0
     if col==DORADO:
-        fila_inicial_oponente:int=7
+        fila_inicial_oponente=7
     for columna in range(ANCHO):
         if (casilla_en_posicion(j.tablero, Posicion(fila_inicial_oponente,columna))==Pieza(CONEJO, col)):
             hay=True

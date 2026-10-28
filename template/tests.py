@@ -406,7 +406,7 @@ class test_hay_casilla_vacia_hacia(unittest.TestCase):
 
 class test_hay_pieza_amiga_vecina(unittest.TestCase):
 
-    def test_hay_pieza_amiga_vecina(self):
+    def test_hay_pieza_amiga_vecina_ok(self):
         t:Tablero =  leer_tablero([
               'R-hRD-Rr', #7
               'M----d--', #6
@@ -420,7 +420,7 @@ class test_hay_pieza_amiga_vecina(unittest.TestCase):
             ])
         self.assertTrue(hay_pieza_amiga_vecina(t, Posicion(4, 3)))
 
-    def test_hay_pieza_amiga_vecina(self):
+    def test_hay_pieza_amiga_vecina_erroneo(self):
             t:Tablero =  leer_tablero([
                   'R-hRD-Rr', #7
                   'M----d--', #6
@@ -1622,6 +1622,22 @@ class test_ganador_del_juego(unittest.TestCase):
         j:Juego =  Juego(t, PLATEADO, 0)
         self.assertTrue(hay_ganador_determinado(j))
         self.assertEqual(ganador_del_juego(j), DORADO)
+
+    def test_gana_por_conejo_empujado_a_meta_por_rival(self):
+            t:Tablero =  leer_tablero([
+                  'rr----Rr', #7
+                  'c-----me', #6
+                  '---Ed-R-', #5
+                  '-M---R--', #4
+                  '---R----', #3
+                  '-rrrr---', #2
+                  '-H---DCC', #1
+                  'R-----RR', #0
+                  #01234567
+                ])
+            j:Juego =  Juego(t, PLATEADO, 0)
+            self.assertTrue(hay_ganador_determinado(j))
+            self.assertEqual(ganador_del_juego(j), DORADO)
 
     def test_conejo_plateado_en_meta_turno_del_oponente(self):
         t:Tablero =  leer_tablero(['r-------', VACIO, VACIO, VACIO, VACIO, VACIO, 'R-------', 'r-------'])
