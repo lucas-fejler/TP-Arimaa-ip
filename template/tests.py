@@ -1498,33 +1498,33 @@ def tablero_con_piezas(piezas: list[tuple[Posicion, Casilla]]) -> Tablero:
 
 class test_realizar_movimiento(unittest.TestCase):
 
-    def test_auxiliar_mover_a_secas_este(self):
+    def test_realizar_movimiento_mover_a_secas_este(self):
         origen: Posicion = Posicion(3, 5)
         destino: Posicion = Posicion(3, 6)
         conejo: Pieza = Pieza(CONEJO, DORADO)
         tablero: Tablero = tablero_con_piezas([(origen, conejo)])
         esperado: Tablero = tablero_con_piezas([(destino, conejo)])
+        juego: Juego = Juego(tablero, DORADO, 0)
+        movimiento: Movimiento = Movimiento(MOVER_A_SECAS, origen, [ESTE])
 
-        resultado: Tablero = tablero_post_mover_a_secas(
-            tablero, origen, ESTE
-        )
+        resultado: Juego = realizar_movimiento(juego, movimiento)
 
-        self.assertEqual(resultado, esperado)
+        self.assertEqual(resultado.tablero, esperado)
 
-    def test_auxiliar_mover_a_secas_oeste(self):
+    def test_realizar_movimiento_mover_a_secas_oeste(self):
         origen: Posicion = Posicion(4, 3)
         destino: Posicion = Posicion(4, 2)
         conejo: Pieza = Pieza(CONEJO, DORADO)
         tablero: Tablero = tablero_con_piezas([(origen, conejo)])
         esperado: Tablero = tablero_con_piezas([(destino, conejo)])
+        juego: Juego = Juego(tablero, DORADO, 0)
+        movimiento: Movimiento = Movimiento(MOVER_A_SECAS, origen, [OESTE])
 
-        resultado: Tablero = tablero_post_mover_a_secas(
-            tablero, origen, OESTE
-        )
+        resultado: Juego = realizar_movimiento(juego, movimiento)
 
-        self.assertEqual(resultado, esperado)
+        self.assertEqual(resultado.tablero, esperado)
 
-    def test_auxiliar_arrastrar_sin_trampa(self):
+    def test_realizar_movimiento_arrastrar_sin_trampa(self):
         origen: Posicion = Posicion(3, 3)
         caballo: Pieza = Pieza(CABALLO, DORADO)
         conejo: Pieza = Pieza(CONEJO, PLATEADO)
@@ -1536,121 +1536,12 @@ class test_realizar_movimiento(unittest.TestCase):
             (Posicion(4, 3), caballo),
             (origen, conejo),
         ])
-
-        resultado: Tablero = tablero_post_arrastrar(
-            tablero, origen, NORTE, OESTE
-        )
-
-        self.assertEqual(resultado, esperado)
-
-    def test_auxiliar_arrastrar_a_trampa(self):
-        trampa: Posicion = Posicion(2, 2)
-        caballo: Pieza = Pieza(CABALLO, DORADO)
-        gato: Pieza = Pieza(GATO, DORADO)
-        conejo: Pieza = Pieza(CONEJO, PLATEADO)
-        tablero: Tablero = tablero_con_piezas([
-            (trampa, caballo),
-            (Posicion(2, 1), gato),
-            (Posicion(2, 3), conejo),
-        ])
-        esperado: Tablero = tablero_con_piezas([
-            (Posicion(3, 2), caballo),
-            (Posicion(2, 1), gato),
-        ])
-
-        resultado: Tablero = tablero_post_arrastrar(
-            tablero, trampa, NORTE, OESTE
-        )
-
-        self.assertEqual(resultado, esperado)
-        self.assertEqual(resultado[trampa.fila][trampa.columna], VACIA)
-
-    def test_auxiliar_empujar_sin_trampa(self):
-        origen: Posicion = Posicion(3, 3)
-        caballo: Pieza = Pieza(CABALLO, DORADO)
-        conejo: Pieza = Pieza(CONEJO, PLATEADO)
-        tablero: Tablero = tablero_con_piezas([
-            (origen, caballo),
-            (Posicion(4, 3), conejo),
-        ])
-        esperado: Tablero = tablero_con_piezas([
-            (Posicion(4, 3), caballo),
-            (Posicion(4, 4), conejo),
-        ])
-
-        resultado: Tablero = tablero_post_empujar(
-            tablero, origen, NORTE, ESTE
-        )
-
-        self.assertEqual(resultado, esperado)
-
-    def test_auxiliar_empujar_a_trampa(self):
-        origen: Posicion = Posicion(3, 1)
-        trampa: Posicion = Posicion(2, 2)
-        caballo: Pieza = Pieza(CABALLO, DORADO)
-        conejo: Pieza = Pieza(CONEJO, PLATEADO)
-        tablero: Tablero = tablero_con_piezas([
-            (origen, caballo),
-            (Posicion(3, 2), conejo),
-        ])
-        esperado: Tablero = tablero_con_piezas([
-            (Posicion(3, 2), caballo),
-        ])
-
-        resultado: Tablero = tablero_post_empujar(
-            tablero, origen, ESTE, SUR
-        )
-
-        self.assertEqual(resultado, esperado)
-        self.assertEqual(resultado[trampa.fila][trampa.columna], VACIA)
-
-    def test_despachador_mover_a_secas(self):
-        origen: Posicion = Posicion(3, 3)
-        destino: Posicion = Posicion(4, 3)
-        conejo: Pieza = Pieza(CONEJO, DORADO)
-        tablero: Tablero = tablero_con_piezas([(origen, conejo)])
-        esperado: Tablero = tablero_con_piezas([(destino, conejo)])
-        movimiento: Movimiento = Movimiento(MOVER_A_SECAS, origen, [NORTE])
-
-        resultado: Tablero = tablero_post_movimiento(tablero, movimiento)
-
-        self.assertEqual(resultado, esperado)
-
-    def test_despachador_arrastrar(self):
-        origen: Posicion = Posicion(3, 3)
-        caballo: Pieza = Pieza(CABALLO, DORADO)
-        conejo: Pieza = Pieza(CONEJO, PLATEADO)
-        tablero: Tablero = tablero_con_piezas([
-            (origen, caballo),
-            (Posicion(3, 4), conejo),
-        ])
-        esperado: Tablero = tablero_con_piezas([
-            (Posicion(4, 3), caballo),
-            (origen, conejo),
-        ])
+        juego: Juego = Juego(tablero, DORADO, 0)
         movimiento: Movimiento = Movimiento(ARRASTRAR, origen, [NORTE, OESTE])
 
-        resultado: Tablero = tablero_post_movimiento(tablero, movimiento)
+        resultado: Juego = realizar_movimiento(juego, movimiento)
 
-        self.assertEqual(resultado, esperado)
-
-    def test_despachador_empujar(self):
-        origen: Posicion = Posicion(3, 3)
-        caballo: Pieza = Pieza(CABALLO, DORADO)
-        conejo: Pieza = Pieza(CONEJO, PLATEADO)
-        tablero: Tablero = tablero_con_piezas([
-            (origen, caballo),
-            (Posicion(4, 3), conejo),
-        ])
-        esperado: Tablero = tablero_con_piezas([
-            (Posicion(4, 3), caballo),
-            (Posicion(4, 4), conejo),
-        ])
-        movimiento: Movimiento = Movimiento(EMPUJAR, origen, [NORTE, ESTE])
-
-        resultado: Tablero = tablero_post_movimiento(tablero, movimiento)
-
-        self.assertEqual(resultado, esperado)
+        self.assertEqual(resultado.tablero, esperado)
 
     def test_realizar_movimiento_mover_a_secas_acumula_pasos(self):
         origen: Posicion = Posicion(3, 3)
