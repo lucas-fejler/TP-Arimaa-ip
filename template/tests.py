@@ -432,7 +432,7 @@ class test_hay_pieza_amiga_vecina(unittest.TestCase):
                   're---r--', #0
                   #01234567
                 ])
-            self.assertFalse(hay_pieza_amiga_vecina(t, Posicion(4, 6)))
+            self.assertFalse(hay_pieza_amiga_vecina(t, Posicion(6, 5)))
 
     def test_amiga_al_sur(self):
         t:Tablero =  leer_tablero([

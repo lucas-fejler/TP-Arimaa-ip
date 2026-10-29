@@ -225,7 +225,7 @@ def aux_hay_pieza_amiga_hacia(t:Tablero, pos:Posicion, d: Direccion) -> bool:
     """
     Chequea si la pieza en *pos* tiene una pieza amiga vecina en la dirección *d*.
 
-    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos)
+    PRE: tablero_bien_formado(t) and posicion_en_tablero(pos) and not hay_casilla_vacia(t, pos)
 
     Args:
         t (Tablero): Tablero del juego.
@@ -233,15 +233,12 @@ def aux_hay_pieza_amiga_hacia(t:Tablero, pos:Posicion, d: Direccion) -> bool:
         d (Direccion): Dirección en la que se busca la pieza amiga.
 
     Returns:
-        True si en *pos* hay una pieza y su casilla vecina en la dirección *d* tiene una pieza de su mismo color, y False si no.
+        True si la casilla vecina a *pos* en la dirección *d* tiene una pieza del mismo color que la pieza en *pos*, y False si no.
 
     """
-    res:bool = False
-    if not hay_casilla_vacia(t,pos):
-        c:Casilla = casilla_en_posicion(t,pos)
-        pos_vecina:Posicion = posicion_vecina_hacia(pos,d)
-        res= posicion_en_tablero(pos_vecina) and hay_pieza_de_color(t,pos_vecina,c.color)
-    return res
+    c:Casilla = casilla_en_posicion(t,pos)
+    pos_vecina:Posicion = posicion_vecina_hacia(pos,d)
+    return  posicion_en_tablero(pos_vecina) and hay_pieza_de_color(t,pos_vecina,c.color)
 
 def hay_pieza_enemiga_mas_debil_hacia(t : Tablero, pos : Posicion, d : Direccion) -> bool:
     """
