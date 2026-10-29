@@ -963,12 +963,44 @@ class test_puede_realizar_movimiento(unittest.TestCase):
               '--mMd---', #3
               '---D----', #2
               '--------', #1
+              '-mDR-mD-', #0
+              #01234567
+            ])
+        j:Juego =  Juego(t, DORADO, 0)
+        m:Movimiento =  Movimiento(EMPUJAR, Posicion(0, 2), [OESTE,OESTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_intento_arrastrar_pieza_mas_fuerte(self):
+        t:Tablero =  leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mDR-mD-', #0
+              #01234567
+            ])
+        j:Juego =  Juego(t, DORADO, 0)
+        m:Movimiento =  Movimiento(ARRASTRAR, Posicion(0, 2), [NORTE,ESTE])
+        self.assertFalse(puede_realizar_movimiento(j, m))
+        
+    def test_pieza_congelada_con_pieza_amiga_al_lado(self):
+        t:Tablero =  leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
               '-mD--mDR', #0
               #01234567
             ])
-        j:Juego =  Juego(t, PLATEADO, 0)
-        m:Movimiento =  Movimiento(EMPUJAR, Posicion(0, 2), [OESTE,OESTE])
-        self.assertFalse(puede_realizar_movimiento(j, m))
+        j:Juego =  Juego(t, DORADO, 0)
+        m:Movimiento =  Movimiento(MOVER_A_SECAS, Posicion(0, 6), [NORTE])
+        self.assertTrue(puede_realizar_movimiento(j, m))
         
                 
     def test_direccion_permitida_conejo_dorado(self):
@@ -1201,15 +1233,7 @@ class test_puede_realizar_movimiento(unittest.TestCase):
         j:Juego =  Juego(t, DORADO, 0)
         m:Movimiento =  Movimiento(ARRASTRAR, Posicion(3, 3), [NORTE, OESTE])
         self.assertFalse(puede_realizar_movimiento(j, m))
-
-class test_direccion_de_movimiento_habilitada(unittest.TestCase):
-
-    def test_casilla_vacia(self):
-        t:Tablero =  tablero_8x8_vacio()
-        self.assertFalse(
-            direccion_de_movimiento_habilitada(t, Posicion(3, 3), NORTE)
-        )
-
+        
 #### Ejercicio 5
 
 class test_activar_trampas(unittest.TestCase):

@@ -481,14 +481,12 @@ def puede_realizar_movimiento(j : Juego, m : Movimiento) -> bool:
         True si se puede realizar el movimiento *m* en el juego *j* y False si no.
             
     """
-    return (hay_pieza_de_color(j.tablero,m.origen,j.turno) 
+    return (direccion_de_movimiento_habilitada(j.tablero,m.origen,m.pasos[0])
+            and hay_pieza_de_color(j.tablero,m.origen,j.turno) 
             and not hay_pieza_congelada(j.tablero,m.origen)
-            and direccion_de_movimiento_habilitada(j.tablero,m.origen,m.pasos[0])
             and (j.pasos_consumidos + len(m.pasos)) <= MAX_PASOS 
             and puede_realizar_accion(j.tablero,m))
     
-    
-
 #### Ejercicio 5
 
 def activar_trampas(t : Tablero) -> Tablero:
