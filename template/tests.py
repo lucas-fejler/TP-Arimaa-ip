@@ -1482,8 +1482,6 @@ class test_activar_trampas(unittest.TestCase):
 
 #### Ejercicio 6
 
-#### Ejercicio 6
-
 def tablero_con_piezas(piezas: list[tuple[Posicion, Casilla]]) -> Tablero:
     """Construye un tablero vacío y coloca las piezas indicadas."""
     tablero: Tablero = tablero_8x8_vacio()
