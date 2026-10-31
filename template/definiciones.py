@@ -84,7 +84,7 @@ class Pieza(NamedTuple):
     figura : Figura
     color : Color
 
-VACIA : Final= CasillaVacia.VACIA
+VACIA : Final = CasillaVacia.VACIA
 
 Casilla = CasillaVacia | Pieza
 
@@ -209,7 +209,6 @@ def leer_tablero(lineas : list[str]) -> Tablero:
             fila.append(leer_casilla(letra))
         tablero.append(fila)
     return tablero[::-1]
-
 
 def mostrar_casilla(casilla : Casilla) -> str:
     if casilla == VACIA:
