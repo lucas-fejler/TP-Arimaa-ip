@@ -799,3 +799,95 @@ def ganador_del_juego(j : Juego) -> Color:
     if es_jugador_ganador(j, DORADO):
         ganador=DORADO
     return ganador
+
+# Ejercicios extra
+
+def calcular_mapa_de_la_figura(j:Juego, f:Figura)-> dict[Posicion,bool]:
+    """
+        Devuelve un diccionario donde las claves son las posiciones del tablero *j.tablero* y sus respectivos valores son
+        un booleano que indica si la figura *f* está en esa posición.
+        
+        PRE: juego_bien_formado(j)
+    
+    
+        Args:
+            j (Juego): El juego que queremos mirar.
+            f (Figura): La figura que queremos mapear.
+    
+        Returns:
+            Diccionario cuyas claves son las posiciones del tablero, donde sus valores son True si en esa posición está la figura *f*
+            y False en caso contrario.
+    """
+    res:dict={}
+    for fila in range (ALTO):
+        for col in range (ANCHO):
+            pos:Posicion = Posicion(fila,col)
+            if not hay_casilla_vacia(j.tablero,pos):
+                casilla:Pieza = casilla_en_posicion(j.tablero,pos)            
+                figura:Figura = casilla[0]
+                if figura == f:
+                    res[pos] = True
+            else:
+                res[pos] = False
+    return res
+
+def es_juego_con_turno_cambiado(j0:Juego,j1:Juego)-> bool:
+    return (j0.tablero == j1.tablero
+            and j1.turno == oponente(j0.turno)
+            and j1.pasos_consumidos == 0)
+
+def jugador_actual_puede_mover(j:Juego) -> bool:
+    res:bool = False
+    for fila in ANCHO:
+        for col in ALTO:
+            origen:Posicion = Posicion(fila,col)
+            if not res:
+                res = pieza_puede_mover(origen,j.tablero)
+    return res
+
+
+def pieza_puede_mover(pos:Posicion, t:Tablero)-> bool:
+    acciones:list[str]= [MOVER_A_SECAS,ARRASTRAR,EMPUJAR]
+    direcciones:list[str] = [NORTE,SUR,ESTE,OESTE]
+    pasos:list[str] = []   
+    res:bool = False
+    for accion in acciones:
+        for direccion in direcciones:
+                if accion == MOVER_A_SECAS:
+                    pasos=[direccion]
+                    m:Movimiento = Movimiento(accion,pos,pasos)
+                    if not res:
+                        res = movimiento_bien_formado(m) and puede_realizar_movimiento(j,m)
+                else:
+                    for direccion_oponente in direcciones:
+                        pasos = [direccion,direccion_oponente]
+                        m:Movimiento = Movimiento(accion,pos,pasos)
+                        if not res:
+                            res = movimiento_bien_formado(m) and puede_realizar_movimiento(j,m)
+    return res
+
+def juego_completamente_trabado(j:Juego)-> bool:
+    juego_oponente:Juego = Juego(j.tablero,oponente(juego_oponente.turno),j.pasos_consumidos)
+    return (not jugador_actual_puede_mover(j)
+            and es_juego_con_turno_cambiado(j,juego_oponente)
+            and not jugador_actual_puede_mover(juego_oponente))
+
+
+""" t:Tablero =  leer_tablero([
+              '--eMr---', #7
+              '--------', #6
+              '-R----r-', #5
+              '--------', #4
+              '--mMd---', #3
+              '---D----', #2
+              '--------', #1
+              '-mD--mDR', #0
+              #01234567
+            ])
+j:Juego =  Juego(t, PLATEADO, 0)
+
+pos=t[0][1]
+print(casilla_en_posicion(t,Posicion(0,1)))
+print(pos[0]==CAMELLO)
+print(calcular_mapa_de_la_figura(j,PERRO)) """
+
